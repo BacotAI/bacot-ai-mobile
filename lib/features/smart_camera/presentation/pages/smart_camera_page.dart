@@ -128,10 +128,11 @@ class _SmartCameraPageState extends State<SmartCameraPage> {
         final poses = await _poseDetectorService.processImage(inputImage);
         if (mounted) {
           final screenSize = MediaQuery.of(context).size;
+          final headRadius = screenSize.width * 0.24;
           final validationResult = PostureValidator.validate(
             poses: poses,
             imageSize: Size(image.width.toDouble(), image.height.toDouble()),
-            screenSize: screenSize,
+            screenSize: Size(headRadius, headRadius * 2.1),
             rotation:
                 inputImage.metadata?.rotation ??
                 InputImageRotation.rotation270deg,
