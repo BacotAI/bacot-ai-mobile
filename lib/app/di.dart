@@ -11,6 +11,9 @@ import 'package:smart_interview_ai/features/auth/domain/auth_repository.dart';
 import 'package:smart_interview_ai/features/sample/data/repositories/sample_repository_impl.dart';
 import 'package:smart_interview_ai/features/sample/domain/repositories/sample_repository.dart';
 import 'package:smart_interview_ai/features/sample/presentation/cubit/sample_cubit.dart';
+import 'package:smart_interview_ai/features/pre_interview/domain/repositories/pre_interview_repository.dart';
+import 'package:smart_interview_ai/features/pre_interview/data/repositories/pre_interview_repository_impl.dart';
+import 'package:smart_interview_ai/features/pre_interview/presentation/cubit/pre_interview_cubit.dart';
 
 final sl = GetIt.instance;
 
@@ -29,6 +32,14 @@ class DI {
     );
     // Cubit
     sl.registerFactory(() => SampleCubit(repository: sl()));
+
+    // 4. Features - Pre-Interview
+    // Repositories
+    sl.registerLazySingleton<PreInterviewRepository>(
+      () => PreInterviewRepositoryImpl(),
+    );
+    // Cubit
+    sl.registerFactory(() => PreInterviewCubit(repository: sl()));
   }
 
   static ApiClient _buildApiClient() {

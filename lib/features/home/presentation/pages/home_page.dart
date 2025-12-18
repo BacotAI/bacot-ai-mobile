@@ -63,6 +63,15 @@ class HomePage extends StatelessWidget {
                       onTap: () =>
                           context.router.push(const SmartCameraRoute()),
                     ),
+                    const SizedBox(height: 16),
+                    FeatureCard(
+                      title: 'Persiapan Interview',
+                      subtitle: 'Mulai dengan pilihan pertanyaan',
+                      icon: Icons.menu_book_rounded,
+                      color: const Color(0xFFF59E0B), // Amber
+                      onTap: () =>
+                          context.router.push(const PreInterviewRoute()),
+                    ),
                   ],
                 ),
               ),
