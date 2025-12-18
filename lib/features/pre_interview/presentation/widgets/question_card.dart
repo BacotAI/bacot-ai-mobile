@@ -1,5 +1,7 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import '../../domain/entities/question_entity.dart';
+import 'package:smart_interview_ai/app/router/app_router.gr.dart';
+import 'package:smart_interview_ai/features/pre_interview/domain/entities/question_entity.dart';
 import 'keyword_chip.dart';
 
 class QuestionCard extends StatefulWidget {
@@ -102,7 +104,7 @@ class _QuestionCardState extends State<QuestionCard>
                       decoration: BoxDecoration(
                         color: _getDifficultyColor(
                           widget.question.difficulty,
-                        ).withOpacity(0.1),
+                        ).withAlpha(255),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
@@ -225,6 +227,31 @@ class _QuestionCardState extends State<QuestionCard>
                   children: widget.question.powerWords
                       .map((word) => KeywordChip(label: word))
                       .toList(),
+                ),
+                const SizedBox(height: 24),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      context.router.push(
+                        OnInterviewRoute(question: widget.question),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF1E293B),
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      elevation: 0,
+                    ),
+                    icon: const Icon(Icons.videocam_rounded, size: 20),
+                    label: const Text(
+                      'Mulai Latihan',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ),
                 ),
               ],
             ),

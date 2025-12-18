@@ -11,5 +11,6 @@ class AppRouter extends RootStackRouter {
     AutoRoute(page: VideoInputRoute.page),
     AutoRoute(page: SmartCameraRoute.page),
     AutoRoute(page: PreInterviewRoute.page),
+    AutoRoute(page: OnInterviewRoute.page),
   ];
 }
