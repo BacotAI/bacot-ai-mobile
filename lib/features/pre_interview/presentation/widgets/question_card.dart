@@ -209,7 +209,7 @@ class _QuestionCardState extends State<QuestionCard>
                     ),
                   ),
                 ),
-                const Divider(height: 1),
+                Divider(height: 1, color: Colors.grey[300]),
                 const SizedBox(height: 16),
                 Text(
                   'SUGGESTED POWER WORDS',
@@ -222,35 +222,69 @@ class _QuestionCardState extends State<QuestionCard>
                 ),
                 const SizedBox(height: 12),
                 Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
+                  spacing: 6,
+                  runSpacing: 6,
                   children: widget.question.powerWords
                       .map((word) => KeywordChip(label: word))
                       .toList(),
                 ),
-                const SizedBox(height: 24),
                 SizedBox(
                   width: double.infinity,
-                  child: ElevatedButton.icon(
-                    onPressed: () {
-                      context.router.push(
-                        OnInterviewRoute(question: widget.question),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF1E293B),
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 24),
+                      SizedBox(
+                        width: double.infinity,
+                        child: OutlinedButton.icon(
+                          onPressed: () {
+                            context.router.push(
+                              IceBreakingRoute(question: widget.question),
+                            );
+                          },
+                          style: OutlinedButton.styleFrom(
+                            side: const BorderSide(color: Color(0xFF1E293B)),
+                            foregroundColor: const Color(0xFF1E293B),
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          icon: const Icon(
+                            Icons.accessibility_new_rounded,
+                            size: 20,
+                          ),
+                          label: const Text(
+                            'Siap Persiapan',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ),
                       ),
-                      elevation: 0,
-                    ),
-                    icon: const Icon(Icons.videocam_rounded, size: 20),
-                    label: const Text(
-                      'Mulai Latihan',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
+                      const SizedBox(height: 8),
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton.icon(
+                          onPressed: () {
+                            context.router.push(
+                              OnInterviewRoute(question: widget.question),
+                            );
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF1E293B),
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            elevation: 0,
+                          ),
+                          icon: const Icon(Icons.videocam_rounded, size: 20),
+                          label: const Text(
+                            'Mulai Latihan',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],
