@@ -21,34 +21,20 @@ final sl = GetIt.instance;
 
 class DI {
   static Future<void> init() async {
-    // 1. Environment
     await dotenv.load(fileName: '.env');
 
-    // 2. Core (Network)
     sl.registerLazySingleton<ApiClient>(() => _buildApiClient());
-
-    // 3. Features - Sample
-    // Repositories
     sl.registerFactory<SampleRepository>(
       () => SampleRepositoryImpl(apiClient: sl()),
     );
-    // Cubit
     sl.registerFactory(() => SampleCubit(repository: sl()));
-
-    // 4. Features - Pre-Interview
-    // Repositories
     sl.registerLazySingleton<PreInterviewRepository>(
       () => PreInterviewRepositoryImpl(),
     );
-    // Cubit
     sl.registerFactory(() => PreInterviewCubit(repository: sl()));
-
-    // 5. Features - On-Interview
-    // Services (Singleton as it may hold camera resources)
     sl.registerLazySingleton<InterviewRecorderService>(
       () => InterviewRecorderService(),
     );
-    // Cubit
     sl.registerFactory(() => OnInterviewCubit(recorderService: sl()));
   }
 
@@ -66,9 +52,7 @@ class DI {
     return DioApiClient(dio);
   }
 
-  // Legacy / Helpers
   static Future<void> initEnv() async => await dotenv.load(fileName: '.env');
 
-  // TODO: Migrate AuthRepository to GetIt fully
   static late final AuthRepository authRepository;
 }

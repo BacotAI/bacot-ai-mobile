@@ -65,7 +65,7 @@ class HomePage extends StatelessWidget {
                     ),
                     const SizedBox(height: 16),
                     FeatureCard(
-                      title: 'Persiapan Interview',
+                      title: 'Pre-interview',
                       subtitle: 'Mulai dengan pilihan pertanyaan',
                       icon: Icons.menu_book_rounded,
                       color: const Color(0xFFF59E0B), // Amber

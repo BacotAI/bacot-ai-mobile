@@ -62,7 +62,7 @@ class ObjectDetectorService {
   }
 
   Future<ProhibitedItemResult?> processImage(InputImage inputImage) async {
-    if (_isProcessing || _hatDetector == null || _maskDetector == null) {
+    if (_isProcessing || _hatDetector == null) {
       return null;
     }
     _isProcessing = true;

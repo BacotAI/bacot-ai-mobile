@@ -80,7 +80,7 @@ class _QuestionCardState extends State<QuestionCard>
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: Colors.black.withAlpha(24),
             blurRadius: 20,
             offset: const Offset(0, 8),
           ),

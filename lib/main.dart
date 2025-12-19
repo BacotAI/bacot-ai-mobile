@@ -10,7 +10,7 @@ import 'package:smart_interview_ai/firebase_options.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  await DI.initEnv();
+  await DI.init();
 
   final prefs = await SharedPreferences.getInstance();
   final googleSignIn = GoogleSignIn();
