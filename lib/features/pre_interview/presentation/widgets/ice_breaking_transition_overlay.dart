@@ -7,9 +7,6 @@ class IceBreakingTransitionOverlay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // "Shredder" Effect:
-    // Scale down vertically to 0 while maintaining width? Or fade to black with noise?
-    // Let's do a Fade + Zoom Out + "Digital Noise" feel (black overlay).
     return FadeTransition(
       opacity: exitController,
       child: Container(

@@ -14,6 +14,8 @@ import 'package:smart_interview_ai/features/pre_interview/presentation/widgets/i
 import 'package:smart_interview_ai/features/pre_interview/presentation/widgets/ice_breaking_preview_layer.dart';
 import 'package:smart_interview_ai/features/pre_interview/presentation/widgets/ice_breaking_transition_overlay.dart';
 import 'package:smart_interview_ai/features/on_interview/logic/interview_recorder_service.dart';
+import 'package:smart_interview_ai/core/helper/presentation_helper.dart';
+import 'package:smart_interview_ai/core/presentation/widgets/custom_snackbar.dart';
 import 'package:video_player/video_player.dart';
 
 @RoutePage()
@@ -89,11 +91,13 @@ class _IceBreakingPageState extends State<IceBreakingPage>
       }
     } else {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Camera and Microphone permissions are required'),
-          ),
-        );
+        if (mounted) {
+          PresentationHelper.showCustomSnackBar(
+            context: context,
+            message: 'Camera and Microphone permissions are required',
+            type: SnackbarType.error,
+          );
+        }
       }
     }
   }
@@ -135,14 +139,16 @@ class _IceBreakingPageState extends State<IceBreakingPage>
     } catch (e) {
       Log.error('Error toggling recording: $e');
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Error recording: $e')));
+        PresentationHelper.showCustomSnackBar(
+          context: context,
+          message: 'Error recording: $e',
+          type: SnackbarType.error,
+        );
       }
     }
   }
 
-  Future<void> _finishIceBreaking() async {
+  Future<void> finishIceBreaking() async {
     setState(() => _isExiting = true);
     await _exitController.forward();
 
@@ -152,6 +158,13 @@ class _IceBreakingPageState extends State<IceBreakingPage>
     if (_recordedVideo != null) {
       try {
         await File(_recordedVideo!.path).delete();
+        if (mounted) {
+          PresentationHelper.showCustomSnackBar(
+            context: context,
+            message: 'Ice breaking selesai',
+            type: SnackbarType.success,
+          );
+        }
       } catch (e) {
         Log.error("Error deleting file: $e");
       }
@@ -196,11 +209,11 @@ class _IceBreakingPageState extends State<IceBreakingPage>
             IceBreakingPreviewLayer(
               videoController: _videoController!,
               checklistController: _checklistController,
-              onFinish: _finishIceBreaking,
+              onFinish: finishIceBreaking,
               onSkip: () => context.router.replace(
                 OnInterviewRoute(question: widget.question),
               ),
-              onBack: _finishIceBreaking,
+              onBack: finishIceBreaking,
             )
           else
             IceBreakingCameraLayer(
@@ -217,11 +230,11 @@ class _IceBreakingPageState extends State<IceBreakingPage>
               },
             ),
 
-          // SHREDDER / EXIT ANIMATION OVERLAY
+          // EXIT ANIMATION OVERLAY
           if (_isExiting)
             IceBreakingTransitionOverlay(exitController: _exitController),
 
-          // CONFETTI LAYER (Top)
+          // CONFETTI LAYER
           Align(
             alignment: Alignment.topCenter,
             child: ConfettiWidget(

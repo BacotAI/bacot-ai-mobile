@@ -1,6 +1,8 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:smart_interview_ai/app/di.dart';
+import 'package:smart_interview_ai/core/helper/presentation_helper.dart';
+import 'package:smart_interview_ai/core/presentation/widgets/custom_snackbar.dart';
 import 'package:smart_interview_ai/app/router/app_router.gr.dart';
 
 @RoutePage()
@@ -29,16 +31,20 @@ class _LoginPageState extends State<LoginPage> {
           context.router.replace(const HomeRoute());
         } else {
           // Canceled by user
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(const SnackBar(content: Text('Sign in canceled')));
+          PresentationHelper.showCustomSnackBar(
+            context: context,
+            message: 'Sign in canceled',
+            type: SnackbarType.info,
+          );
         }
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Login Failed: $e')));
+        PresentationHelper.showCustomSnackBar(
+          context: context,
+          message: 'Login Failed: $e',
+          type: SnackbarType.error,
+        );
       }
     } finally {
       if (mounted) {

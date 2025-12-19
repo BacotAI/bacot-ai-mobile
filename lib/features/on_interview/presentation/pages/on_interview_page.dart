@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:smart_interview_ai/app/di.dart';
+import 'package:smart_interview_ai/core/helper/presentation_helper.dart';
+import 'package:smart_interview_ai/core/presentation/widgets/custom_snackbar.dart';
 import 'package:smart_interview_ai/features/pre_interview/domain/entities/question_entity.dart';
 import '../cubit/on_interview_cubit.dart';
 import '../cubit/on_interview_state.dart';
@@ -28,10 +30,10 @@ class _OnInterviewPageState extends State<OnInterviewPage> {
 
     if (cameraStatus.isDenied || microphoneStatus.isDenied) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Camera and Microphone permissions are required.'),
-          ),
+        PresentationHelper.showCustomSnackBar(
+          context: context,
+          message: 'Camera and Microphone permissions are required.',
+          type: SnackbarType.error,
         );
         context.router.back();
       }
@@ -77,9 +79,11 @@ class _OnInterviewPageState extends State<OnInterviewPage> {
               );
             }
             if (state is OnInterviewError) {
-              ScaffoldMessenger.of(
-                context,
-              ).showSnackBar(SnackBar(content: Text(state.message)));
+              PresentationHelper.showCustomSnackBar(
+                context: context,
+                message: state.message,
+                type: SnackbarType.error,
+              );
             }
           },
           builder: (context, state) {
