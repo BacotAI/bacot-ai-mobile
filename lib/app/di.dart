@@ -7,7 +7,7 @@ import 'package:smart_interview_ai/core/network/api_client.dart';
 import 'package:smart_interview_ai/core/network/dio_api_client.dart';
 import 'package:smart_interview_ai/core/network/interceptors/auth_interceptor.dart';
 import 'package:smart_interview_ai/core/network/interceptors/logging_interceptor.dart';
-import 'package:smart_interview_ai/features/auth/domain/auth_repository.dart';
+import 'package:smart_interview_ai/features/auth/domain/repositories/auth_repository.dart';
 import 'package:smart_interview_ai/features/sample/data/repositories/sample_repository_impl.dart';
 import 'package:smart_interview_ai/features/sample/domain/repositories/sample_repository.dart';
 import 'package:smart_interview_ai/features/sample/presentation/cubit/sample_cubit.dart';

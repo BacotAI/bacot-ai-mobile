@@ -4,7 +4,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smart_interview_ai/app/app.dart';
 import 'package:smart_interview_ai/app/di.dart';
-import 'package:smart_interview_ai/features/auth/repositories/auth_repository_impl.dart';
+import 'package:smart_interview_ai/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:smart_interview_ai/firebase_options.dart';
 
 Future<void> main() async {

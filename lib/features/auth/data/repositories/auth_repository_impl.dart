@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smart_interview_ai/features/auth/models/user_model.dart';
-import 'package:smart_interview_ai/features/auth/domain/auth_repository.dart';
+import 'package:smart_interview_ai/features/auth/domain/repositories/auth_repository.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
   final GoogleSignIn _googleSignIn;
