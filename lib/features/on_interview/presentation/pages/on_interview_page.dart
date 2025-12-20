@@ -5,12 +5,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:smart_interview_ai/app/di.dart';
 import 'package:smart_interview_ai/core/helper/presentation_helper.dart';
-import 'package:smart_interview_ai/core/presentation/widgets/custom_snackbar.dart';
+import 'package:smart_interview_ai/core/widgets/snackbar/custom_snackbar.dart';
 import 'package:smart_interview_ai/features/pre_interview/domain/entities/question_entity.dart';
 import '../cubit/on_interview_cubit.dart';
 import '../cubit/on_interview_state.dart';
 import '../widgets/camera_overlay.dart';
-import '../../logic/interview_recorder_service.dart';
+import '../../../../core/services/interview_recorder_service.dart';
 
 @RoutePage()
 class OnInterviewPage extends StatefulWidget {

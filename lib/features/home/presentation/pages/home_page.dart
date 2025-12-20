@@ -48,14 +48,6 @@ class HomePage extends StatelessWidget {
                     ),
                     const SizedBox(height: 16),
                     FeatureCard(
-                      title: 'Video Input',
-                      subtitle: 'Rekam video dan transkripsi',
-                      icon: Icons.videocam_rounded,
-                      color: const Color(0xFF10B981), // Emerald
-                      onTap: () => context.router.push(const VideoInputRoute()),
-                    ),
-                    const SizedBox(height: 16),
-                    FeatureCard(
                       title: 'Smart Camera',
                       subtitle: 'Analisis postur dan wajah real-time',
                       icon: Icons.face_retouching_natural_rounded,

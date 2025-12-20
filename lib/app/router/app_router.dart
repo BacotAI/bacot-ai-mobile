@@ -8,7 +8,6 @@ class AppRouter extends RootStackRouter {
     AutoRoute(page: HomeRoute.page, initial: true),
     AutoRoute(page: LoginRoute.page),
     AutoRoute(page: AudioInputRoute.page),
-    AutoRoute(page: VideoInputRoute.page),
     AutoRoute(page: SmartCameraRoute.page),
     AutoRoute(page: PreInterviewRoute.page),
     AutoRoute(page: IceBreakingRoute.page),

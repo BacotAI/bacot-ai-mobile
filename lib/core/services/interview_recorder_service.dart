@@ -2,9 +2,9 @@ import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
 import 'package:google_mlkit_pose_detection/google_mlkit_pose_detection.dart';
-import '../../smart_camera/services/face_detector_service.dart';
-import '../../smart_camera/services/pose_detector_service.dart';
-import '../../smart_camera/services/object_detector_service.dart';
+import '../../features/smart_camera/services/face_detector_service.dart';
+import '../../features/smart_camera/services/pose_detector_service.dart';
+import '../../features/smart_camera/services/object_detector_service.dart';
 
 class InterviewRecorderService {
   CameraController? _cameraController;

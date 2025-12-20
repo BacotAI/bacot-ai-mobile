@@ -22,3 +22,12 @@ Feature pages masih dipisahkan lewat halaman Home
 
 example:
 on the sample page
+
+
+# Terminal command guide
+
+Command kode (seperti auto_route, json_serializable, atau dependency injection) dalam proyek Flutter ini:
+
+```bash
+flutter pub run build_runner build
+```

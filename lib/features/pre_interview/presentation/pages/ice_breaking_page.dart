@@ -13,9 +13,9 @@ import 'package:smart_interview_ai/features/pre_interview/presentation/widgets/d
 import 'package:smart_interview_ai/features/pre_interview/presentation/widgets/ice_breaking_camera_layer.dart';
 import 'package:smart_interview_ai/features/pre_interview/presentation/widgets/ice_breaking_preview_layer.dart';
 import 'package:smart_interview_ai/features/pre_interview/presentation/widgets/ice_breaking_transition_overlay.dart';
-import 'package:smart_interview_ai/features/on_interview/logic/interview_recorder_service.dart';
+import 'package:smart_interview_ai/core/services/interview_recorder_service.dart';
 import 'package:smart_interview_ai/core/helper/presentation_helper.dart';
-import 'package:smart_interview_ai/core/presentation/widgets/custom_snackbar.dart';
+import 'package:smart_interview_ai/core/widgets/snackbar/custom_snackbar.dart';
 import 'package:video_player/video_player.dart';
 
 @RoutePage()

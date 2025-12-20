@@ -14,7 +14,7 @@ import 'package:smart_interview_ai/features/sample/presentation/cubit/sample_cub
 import 'package:smart_interview_ai/features/pre_interview/domain/repositories/pre_interview_repository.dart';
 import 'package:smart_interview_ai/features/pre_interview/data/repositories/pre_interview_repository_impl.dart';
 import 'package:smart_interview_ai/features/pre_interview/presentation/cubit/pre_interview_cubit.dart';
-import 'package:smart_interview_ai/features/on_interview/logic/interview_recorder_service.dart';
+import 'package:smart_interview_ai/core/services/interview_recorder_service.dart';
 import 'package:smart_interview_ai/features/on_interview/presentation/cubit/on_interview_cubit.dart';
 
 final sl = GetIt.instance;

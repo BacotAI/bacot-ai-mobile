@@ -20,7 +20,7 @@ import 'package:smart_interview_ai/features/smart_camera/presentation/widgets/in
 
 import 'package:smart_interview_ai/core/config/app_colors.dart';
 import 'package:smart_interview_ai/core/helper/presentation_helper.dart';
-import 'package:smart_interview_ai/core/presentation/widgets/custom_snackbar.dart';
+import 'package:smart_interview_ai/core/widgets/snackbar/custom_snackbar.dart';
 
 @RoutePage()
 class SmartCameraPage extends StatefulWidget {

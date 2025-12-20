@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:smart_interview_ai/core/presentation/widgets/custom_snackbar.dart';
+import 'package:smart_interview_ai/core/widgets/snackbar/custom_snackbar.dart';
 
 class PresentationHelper {
   static OverlayEntry? _currentOverlayEntry;

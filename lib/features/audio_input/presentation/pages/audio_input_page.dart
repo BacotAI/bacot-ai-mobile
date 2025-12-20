@@ -41,13 +41,6 @@ class AudioInputPage extends StatelessWidget {
           ),
           actions: [
             IconButton(
-              icon: const Icon(Icons.videocam),
-              onPressed: () {
-                context.router.push(const VideoInputRoute());
-              },
-              tooltip: 'Video Input',
-            ),
-            IconButton(
               icon: const Icon(Icons.logout),
               onPressed: () => _handleLogout(context),
               tooltip: 'Logout',

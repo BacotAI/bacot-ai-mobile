@@ -2,7 +2,7 @@ import 'dart:ui';
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
-import 'package:smart_interview_ai/features/on_interview/logic/interview_recorder_service.dart';
+import 'package:smart_interview_ai/core/services/interview_recorder_service.dart';
 
 class IceBreakingCameraLayer extends StatelessWidget {
   final InterviewRecorderService recorderService;
