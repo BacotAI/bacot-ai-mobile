@@ -1,5 +1,5 @@
-# smart-interview-ai
-Smart Interview Assistant adalah sistem analisis interview berbasis AI yang mampu mendeteksi ekspresi wajah, intonasi suara, bahasa tubuh, dan gesture kandidat selama proses wawancara. 
+# smart-interview-ai (Bacot AI)
+Smart Interview Assistant analisis interview berbasis AI yang mampu mendeteksi ekspresi wajah, intonasi suara, bahasa tubuh, dan gesture kandidat selama proses wawancara. 
 
 Aplikasi ini juga memanfaatkan model AI dari OpenAI untuk menganalisis konteks percakapan dari audio dan video, kemudian menghasilkan skor penilaian berdasarkan kompetensi inti seperti:
 	•	Komunikasi
