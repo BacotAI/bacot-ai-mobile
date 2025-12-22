@@ -55,12 +55,34 @@ class _HomePageState extends State<HomePage> {
                   height: 1.2,
                 ),
               ),
+
               const SizedBox(height: 16),
               Text(
                 'Metode Testing AI',
                 style: Theme.of(
                   context,
                 ).textTheme.bodyLarge?.copyWith(color: const Color(0xFF64748B)),
+              ),
+              const SizedBox(height: 16),
+              SizedBox(
+                width: double.infinity,
+                height: 46,
+                child: OutlinedButton(
+                  onPressed: () async {
+                    await DI.authRepository.logout();
+
+                    if (!context.mounted) return;
+
+                    context.router.replaceAll([const LoginRoute()]);
+                  },
+                  child: const Text(
+                    "Keluar",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
+                    ),
+                  ),
+                ),
               ),
               const SizedBox(height: 48),
               Expanded(
