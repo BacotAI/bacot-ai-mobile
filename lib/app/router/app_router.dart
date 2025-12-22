@@ -8,6 +8,9 @@ class AppRouter extends RootStackRouter {
   AppRouter(this.authGuard);
 
   @override
+  RouteType get defaultRouteType => const RouteType.cupertino();
+
+  @override
   List<AutoRoute> get routes => [
     AutoRoute(page: LoginRoute.page, initial: true),
     AutoRoute(page: HomeRoute.page, guards: [authGuard]),

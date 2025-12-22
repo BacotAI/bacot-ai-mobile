@@ -30,27 +30,14 @@ class MissionQuestionCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(32),
-        border: isActive
-            ? Border.all(
-                color: const Color(0xFF6366F1).withAlpha(100),
-                width: 2,
-              )
-            : Border.all(color: const Color(0xFFF1F5F9), width: 1),
-        boxShadow: isActive
-            ? [
-                BoxShadow(
-                  color: const Color(0xFF6366F1).withAlpha(20),
-                  blurRadius: 30,
-                  offset: const Offset(0, 10),
-                ),
-              ]
-            : [
-                BoxShadow(
-                  color: Colors.black.withAlpha(5),
-                  blurRadius: 20,
-                  offset: const Offset(0, 4),
-                ),
-              ],
+        border: Border.all(color: const Color(0xFFF1F5F9), width: 1),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withAlpha(5),
+            blurRadius: 20,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Padding(
         padding: const EdgeInsets.all(24),

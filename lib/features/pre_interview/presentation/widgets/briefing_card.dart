@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'briefing_tag.dart';
+import 'briefing_question_setting_bottom_sheet.dart';
 
 class BriefingCard extends StatelessWidget {
   final String title;
@@ -12,6 +13,7 @@ class BriefingCard extends StatelessWidget {
   final VoidCallback? onActionPressed;
   final bool isLocked;
   final bool isActive;
+  final bool showSetting;
 
   const BriefingCard({
     super.key,
@@ -24,17 +26,25 @@ class BriefingCard extends StatelessWidget {
     this.onActionPressed,
     this.isLocked = false,
     this.isActive = false,
+    this.showSetting = false,
   });
 
   @override
   Widget build(BuildContext context) {
+    void showSettingBottomSheet(BuildContext context) {
+      BriefingQuestionSettingBottomSheet.show(context);
+    }
+
     return Container(
       margin: const EdgeInsets.only(bottom: 24),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(32),
         border: isActive
-            ? Border.all(color: const Color(0xFF0EA5E9).withAlpha(50), width: 2)
+            ? Border.all(
+                color: const Color(0xFF0EA5E9).withAlpha(50),
+                width: 2.5,
+              )
             : null,
         boxShadow: [
           BoxShadow(
@@ -80,53 +90,7 @@ class BriefingCard extends StatelessWidget {
                   height: 1.5,
                 ),
               ),
-              if (actionLabel != null) ...[
-                const SizedBox(height: 24),
-                Material(
-                  color: const Color(0xFFF8FAFC),
-                  borderRadius: BorderRadius.circular(20),
-                  child: InkWell(
-                    onTap: isLocked ? null : onActionPressed,
-                    borderRadius: BorderRadius.circular(20),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 12,
-                      ),
-                      decoration: BoxDecoration(
-                        border: Border.all(color: const Color(0xFFE2E8F0)),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Row(
-                        children: [
-                          if (actionIcon != null) ...[
-                            Icon(
-                              actionIcon,
-                              size: 20,
-                              color: const Color(0xFF0EA5E9),
-                            ),
-                            const SizedBox(width: 12),
-                          ],
-                          Text(
-                            actionLabel!,
-                            style: const TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w700,
-                              color: Color(0xFF475569),
-                            ),
-                          ),
-                          const Spacer(),
-                          const Icon(
-                            Icons.chevron_right_rounded,
-                            size: 20,
-                            color: Color(0xFFCBD5E1),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ],
+
               if (isActive && !isLocked) ...[
                 const SizedBox(height: 20),
                 Stack(
@@ -218,6 +182,83 @@ class BriefingCard extends StatelessWidget {
                         ),
                       ),
                     ),
+                  ],
+                ),
+              ],
+
+              if (actionLabel != null) ...[
+                const SizedBox(height: 24),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Material(
+                        color: const Color(0xFFF8FAFC),
+                        borderRadius: BorderRadius.circular(20),
+                        child: InkWell(
+                          onTap: isLocked ? null : onActionPressed,
+                          borderRadius: BorderRadius.circular(20),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 12,
+                            ),
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: const Color(0xFFE2E8F0),
+                              ),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Row(
+                              children: [
+                                if (actionIcon != null) ...[
+                                  Icon(
+                                    actionIcon,
+                                    size: 20,
+                                    color: const Color(0xFF0EA5E9),
+                                  ),
+                                  const SizedBox(width: 12),
+                                ],
+                                Text(
+                                  actionLabel!,
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w700,
+                                    color: Color(0xFF475569),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    if (showSetting) ...[
+                      const SizedBox(width: 12),
+                      Material(
+                        color: const Color(0xFFF8FAFC),
+                        borderRadius: BorderRadius.circular(20),
+                        child: InkWell(
+                          onTap: isLocked
+                              ? null
+                              : () => showSettingBottomSheet(context),
+                          borderRadius: BorderRadius.circular(20),
+                          child: Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: const Color(0xFFE2E8F0),
+                              ),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Icon(
+                              Icons.format_list_bulleted_rounded,
+                              size: 20,
+                              color: const Color(0xFF64748B),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ],
                 ),
               ],

@@ -131,11 +131,11 @@ class InterviewBriefingPage extends StatelessWidget {
               ),
               actionLabel: 'Mulai',
               actionIcon: Icons.arrow_forward_rounded,
-              onActionPressed: () =>
-                  context.router.push(const MissionBriefingRoute()),
+              onActionPressed: () {},
             ),
             BriefingCard(
               title: 'Collaboration',
+              showSetting: true,
               description:
                   'Ceritakan pengalaman kamu berkolaborasi dengan tim.',
               isActive: true,
@@ -156,6 +156,10 @@ class InterviewBriefingPage extends StatelessWidget {
                 color: Color(0xFF0EA5E9),
                 size: 24,
               ),
+              actionLabel: 'Mulai',
+              actionIcon: Icons.arrow_forward_rounded,
+              onActionPressed: () =>
+                  context.router.push(const MissionBriefingRoute()),
             ),
             BriefingCard(
               title: 'Question 2',

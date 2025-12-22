@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:smart_interview_ai/core/utils/sizes.dart';
 import '../widgets/mission_question_card.dart';
 import '../widgets/mission_help_bottom_sheet.dart';
 
@@ -19,7 +20,7 @@ class MissionBriefingPage extends StatelessWidget {
           onPressed: () => context.router.back(),
         ),
         title: const Text(
-          'BRIEFING',
+          'MISSION',
           style: TextStyle(
             color: Color(0xFF1E293B),
             fontWeight: FontWeight.w900,
@@ -48,41 +49,8 @@ class MissionBriefingPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 6,
-                  ),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFEEF2FF),
-                    borderRadius: BorderRadius.circular(100),
-                    border: Border.all(color: const Color(0xFFE0E7FF)),
-                  ),
-                  child: const Text(
-                    'STEP 2 OF 3',
-                    style: TextStyle(
-                      color: Color(0xFF6366F1),
-                      fontWeight: FontWeight.w900,
-                      fontSize: 11,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                const Text(
-                  'Product Manager Role',
-                  style: TextStyle(
-                    color: Color(0xFF94A3B8),
-                    fontWeight: FontWeight.w700,
-                    fontSize: 13,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 20),
             const Text(
-              'Mission Briefing',
+              'Pertanyaan',
               style: TextStyle(
                 fontSize: 36,
                 fontWeight: FontWeight.w900,
@@ -90,7 +58,7 @@ class MissionBriefingPage extends StatelessWidget {
                 letterSpacing: -1,
               ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: SizesApp.margin),
             RichText(
               text: TextSpan(
                 style: const TextStyle(
@@ -102,7 +70,7 @@ class MissionBriefingPage extends StatelessWidget {
                 children: [
                   const TextSpan(
                     text:
-                        'Review your questions before the timer starts. Use the ',
+                        'Perhatikan pertanyaanmu sebelum waktu dimulai. Gunakan ',
                   ),
                   TextSpan(
                     text: 'STAR method',
@@ -111,9 +79,7 @@ class MissionBriefingPage extends StatelessWidget {
                       fontWeight: FontWeight.w800,
                     ),
                   ),
-                  const TextSpan(
-                    text: ' to structure your answers effectively.',
-                  ),
+                  const TextSpan(text: ' untuk hasil jawaban yang memuaskan.'),
                 ],
               ),
             ),
@@ -124,8 +90,8 @@ class MissionBriefingPage extends StatelessWidget {
               duration: '3 min',
               isActive: true,
               question:
-                  'Tell me about a time you handled a conflict with a coworker.',
-              focus: 'Conflict Resolution, Empathy',
+                  'Bicarakan tentang suatu waktu Anda mengatasi konflik dengan seorang rekan kerja.',
+              focus: 'Penyelesaian Konflik, Empati',
             ),
             MissionQuestionCard(
               questionNumber: 'Q2',
@@ -134,7 +100,7 @@ class MissionBriefingPage extends StatelessWidget {
               categoryBgColor: const Color(0xFFF1F5F9),
               categoryColor: const Color(0xFF64748B),
               question:
-                  'Describe a product you managed that failed to meet expectations.',
+                  'Bicarakan tentang suatu produk yang Anda manajemen yang tidak memenuhi harapan.',
               focus: 'Retrospective, Learning',
             ),
             MissionQuestionCard(
@@ -144,7 +110,7 @@ class MissionBriefingPage extends StatelessWidget {
               categoryBgColor: const Color(0xFFF1F5F9),
               categoryColor: const Color(0xFF64748B),
               question:
-                  'How do you decide what features to build next when resources are limited?',
+                  'Bicarakan tentang suatu waktu Anda menentukan fitur apa yang akan dibangun selanjutnya ketika sumber daya terbatas.',
               focus: 'Decision Making, ROI',
             ),
             MissionQuestionCard(
@@ -154,8 +120,8 @@ class MissionBriefingPage extends StatelessWidget {
               categoryBgColor: const Color(0xFFF1F5F9),
               categoryColor: const Color(0xFF64748B),
               question:
-                  'Where do you see the industry going in the next 5 years?',
-              focus: 'Market Awareness',
+                  'Bicarakan tentang suatu waktu Anda menentukan fitur apa yang akan dibangun selanjutnya ketika sumber daya terbatas.',
+              focus: 'Decision Making, ROI',
             ),
             const SizedBox(height: 40),
           ],
