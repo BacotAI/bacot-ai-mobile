@@ -1,3 +1,8 @@
+<p align="center">
+  <img src="assets/tulkun-icon-transparent.png" width="100" alt="TulKun Icon" />
+</p>
+
+
 # TulKun Project (Bacot AI)
 TulKun adalah aplikasi smart interview berbasis AI yang mampu mendeteksi ekspresi wajah, intonasi suara, bahasa tubuh, dan gesture kandidat selama proses wawancara. 
 
