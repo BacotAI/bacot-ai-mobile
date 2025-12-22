@@ -65,3 +65,4 @@ flutter:
   assets:
     - .env
     - assets/ml/
+    - assets/icon/

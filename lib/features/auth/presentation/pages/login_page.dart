@@ -4,9 +4,9 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:smart_interview_ai/app/di.dart';
 import 'package:smart_interview_ai/app/router/app_router.gr.dart';
-import 'package:smart_interview_ai/core/helper/log_helper.dart';
 import 'package:smart_interview_ai/core/helper/presentation_helper.dart';
 import 'package:smart_interview_ai/core/utils/const.dart';
+import 'package:smart_interview_ai/core/utils/sizes.dart';
 import 'package:smart_interview_ai/core/widgets/snackbar/custom_snackbar.dart';
 import 'package:smart_interview_ai/features/auth/models/save_user_model.dart';
 import 'package:smart_interview_ai/features/auth/models/user_model.dart';
@@ -38,9 +38,6 @@ class _LoginPageState extends State<LoginPage> {
     final accounts = await DI.authRepository.getSavedAccounts();
 
     if (!mounted) return;
-
-    print('current user: $user');
-    print('saved accounts: ${accounts.length}');
 
     setState(() {
       _userModel = user;
@@ -201,11 +198,14 @@ class _LoginPageState extends State<LoginPage> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Image.network(PresentationConst.logoGoogle, width: 50, height: 50),
-        const SizedBox(height: 16),
+        Image.asset(
+          'assets/icon/tulkun-icon-transparent.png',
+          width: 150,
+          height: 150,
+        ),
 
         const Text(
-          "Hello there!",
+          "Hello Sobat TulKun!",
           style: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
@@ -216,7 +216,7 @@ class _LoginPageState extends State<LoginPage> {
         const SizedBox(height: 8),
 
         const Text(
-          "Welcome to the future of browsing.\nSign in to continue.",
+          "Selamat datang di aplikasi Smart Interview AI.\nMasuk untuk melanjutkan.",
           textAlign: TextAlign.center,
           style: TextStyle(color: Colors.black54),
         ),
