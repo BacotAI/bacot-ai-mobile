@@ -2,6 +2,8 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get_it/get_it.dart';
+import 'package:logarte/logarte.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:smart_interview_ai/core/config/env.dart';
 import 'package:smart_interview_ai/core/network/api_client.dart';
 import 'package:smart_interview_ai/core/network/dio_api_client.dart';
@@ -24,18 +26,35 @@ class DI {
     await dotenv.load(fileName: '.env');
 
     sl.registerLazySingleton<ApiClient>(() => _buildApiClient());
-    sl.registerFactory<SampleRepository>(
-      () => SampleRepositoryImpl(apiClient: sl()),
-    );
+    sl.registerFactory<SampleRepository>(() => SampleRepositoryImpl(apiClient: sl()));
     sl.registerFactory(() => SampleCubit(repository: sl()));
-    sl.registerLazySingleton<PreInterviewRepository>(
-      () => PreInterviewRepositoryImpl(),
-    );
+    sl.registerLazySingleton<PreInterviewRepository>(() => PreInterviewRepositoryImpl());
     sl.registerFactory(() => PreInterviewCubit(repository: sl()));
-    sl.registerLazySingleton<InterviewRecorderService>(
-      () => InterviewRecorderService(),
-    );
+    sl.registerLazySingleton<InterviewRecorderService>(() => InterviewRecorderService());
     sl.registerFactory(() => OnInterviewCubit(recorderService: sl()));
+    sl.registerLazySingleton<Logarte>(
+      () => Logarte(
+        password: 'tulkun-tul',
+        onShare: (content) {
+          SharePlus.instance.share(
+            ShareParams(
+              text: content,
+              title: 'Network Request',
+              excludedCupertinoActivities: [CupertinoActivityType.airDrop],
+            ),
+          );
+        },
+        onExport: (allLogs) {
+          SharePlus.instance.share(
+            ShareParams(
+              text: allLogs,
+              title: 'Network Request',
+              excludedCupertinoActivities: [CupertinoActivityType.airDrop],
+            ),
+          );
+        },
+      ),
+    );
   }
 
   static ApiClient _buildApiClient() {
@@ -46,6 +65,8 @@ class DI {
     );
     final dio = Dio(options);
     dio.interceptors.add(AuthInterceptor());
+    dio.interceptors.add(LogarteDioInterceptor(sl<Logarte>()));
+
     if (kDebugMode) {
       dio.interceptors.add(LoggingInterceptor());
     }
