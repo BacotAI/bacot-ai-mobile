@@ -12,5 +12,6 @@ class AppRouter extends RootStackRouter {
     AutoRoute(page: PreInterviewRoute.page),
     AutoRoute(page: IceBreakingRoute.page),
     AutoRoute(page: OnInterviewRoute.page),
+    AutoRoute(page: InterviewBriefingRoute.page),
   ];
 }
