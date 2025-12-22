@@ -36,3 +36,12 @@ flutter pub run build_runner build
 ## Auth
 <img width="511" height="541" alt="image" src="https://github.com/user-attachments/assets/7c6d48f8-3f01-401e-8ca4-be81ba7e8ac5" />
 
+## Home
+<img width="221" height="649" alt="image" src="https://github.com/user-attachments/assets/4f203b07-227a-4882-81d9-6508047c9de7" />
+
+### Navbar
+use this navbar
+<img width="391" height="123" alt="image" src="https://github.com/user-attachments/assets/4f0d2f47-fa36-432e-9de1-073605f0d888" />
+
+## Profile
+<img width="173" height="688" alt="image" src="https://github.com/user-attachments/assets/89745506-56f7-4a95-a977-128f34364f51" />
