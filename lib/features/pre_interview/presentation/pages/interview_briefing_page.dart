@@ -114,8 +114,8 @@ class InterviewBriefingPage extends StatelessWidget {
             ),
             const SizedBox(height: 48),
             BriefingCard(
-              title: 'Icebreaker',
-              description: 'Tell me about yourself and your background.',
+              title: 'Ice Breaking',
+              description: 'Yuk pemanasan dulu',
               tags: const [
                 BriefingTag(
                   label: 'WARM-UP',
@@ -128,13 +128,14 @@ class InterviewBriefingPage extends StatelessWidget {
                 color: Color(0xFF94A3B8),
                 size: 24,
               ),
-              actionLabel: 'View Tips',
-              actionIcon: Icons.lightbulb_rounded,
+              actionLabel: 'Mulai',
+              actionIcon: Icons.arrow_forward_rounded,
               onActionPressed: () {},
             ),
             BriefingCard(
-              title: 'Question 1',
-              description: 'Describe a time you failed and how you handled it.',
+              title: 'Collaboration',
+              description:
+                  'Ceritakan pengalaman kamu berkolaborasi dengan tim.',
               isActive: true,
               tags: const [
                 BriefingTag(

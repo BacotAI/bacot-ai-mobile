@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'briefing_tag.dart';
 
@@ -133,29 +134,50 @@ class BriefingCard extends StatelessWidget {
                   children: [
                     ClipRRect(
                       borderRadius: BorderRadius.circular(24),
-                      child: Container(
-                        height: 140,
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          image: const DecorationImage(
-                            image: NetworkImage(
-                              'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=2671&auto=format&fit=crop',
-                            ),
+                      child: Stack(
+                        children: [
+                          CachedNetworkImage(
+                            imageUrl:
+                                'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=2671&auto=format&fit=crop',
+                            height: 140,
+                            width: double.infinity,
                             fit: BoxFit.cover,
-                          ),
-                        ),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                              colors: [
-                                Colors.transparent,
-                                Colors.black.withAlpha(100),
-                              ],
+                            placeholder: (context, url) => Container(
+                              height: 140,
+                              width: double.infinity,
+                              color: const Color(0xFFF1F5F9),
+                              child: const Center(
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: Color(0xFF0EA5E9),
+                                ),
+                              ),
+                            ),
+                            errorWidget: (context, url, error) => Container(
+                              height: 140,
+                              width: double.infinity,
+                              color: const Color(0xFFF1F5F9),
+                              child: const Icon(
+                                Icons.error_outline_rounded,
+                                color: Color(0xFF94A3B8),
+                              ),
                             ),
                           ),
-                        ),
+                          Container(
+                            height: 140,
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                                colors: [
+                                  Colors.transparent,
+                                  Colors.black.withAlpha(100),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                     Positioned(
