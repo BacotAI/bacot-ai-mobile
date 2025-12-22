@@ -9,8 +9,8 @@
 // coverage:ignore-file
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'package:auto_route/auto_route.dart' as _i9;
-import 'package:flutter/material.dart' as _i10;
+import 'package:auto_route/auto_route.dart' as _i10;
+import 'package:flutter/material.dart' as _i11;
 import 'package:smart_interview_ai/features/audio_input/presentation/pages/audio_input_page.dart'
     as _i1;
 import 'package:smart_interview_ai/features/auth/presentation/pages/login_page.dart'
@@ -18,27 +18,29 @@ import 'package:smart_interview_ai/features/auth/presentation/pages/login_page.d
 import 'package:smart_interview_ai/features/home/presentation/pages/home_page.dart'
     as _i2;
 import 'package:smart_interview_ai/features/on_interview/presentation/pages/on_interview_page.dart'
-    as _i6;
+    as _i7;
 import 'package:smart_interview_ai/features/pre_interview/domain/entities/question_entity.dart'
-    as _i11;
+    as _i12;
 import 'package:smart_interview_ai/features/pre_interview/presentation/pages/ice_breaking_page.dart'
     as _i3;
 import 'package:smart_interview_ai/features/pre_interview/presentation/pages/interview_briefing_page.dart'
     as _i4;
+import 'package:smart_interview_ai/features/pre_interview/presentation/pages/mission_briefing_page.dart'
+    as _i6;
 import 'package:smart_interview_ai/features/pre_interview/presentation/pages/pre_interview_page.dart'
-    as _i7;
-import 'package:smart_interview_ai/features/smart_camera/presentation/pages/smart_camera_page.dart'
     as _i8;
+import 'package:smart_interview_ai/features/smart_camera/presentation/pages/smart_camera_page.dart'
+    as _i9;
 
 /// generated route for
 /// [_i1.AudioInputPage]
-class AudioInputRoute extends _i9.PageRouteInfo<void> {
-  const AudioInputRoute({List<_i9.PageRouteInfo>? children})
+class AudioInputRoute extends _i10.PageRouteInfo<void> {
+  const AudioInputRoute({List<_i10.PageRouteInfo>? children})
     : super(AudioInputRoute.name, initialChildren: children);
 
   static const String name = 'AudioInputRoute';
 
-  static _i9.PageInfo page = _i9.PageInfo(
+  static _i10.PageInfo page = _i10.PageInfo(
     name,
     builder: (data) {
       return const _i1.AudioInputPage();
@@ -48,13 +50,13 @@ class AudioInputRoute extends _i9.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i2.HomePage]
-class HomeRoute extends _i9.PageRouteInfo<void> {
-  const HomeRoute({List<_i9.PageRouteInfo>? children})
+class HomeRoute extends _i10.PageRouteInfo<void> {
+  const HomeRoute({List<_i10.PageRouteInfo>? children})
     : super(HomeRoute.name, initialChildren: children);
 
   static const String name = 'HomeRoute';
 
-  static _i9.PageInfo page = _i9.PageInfo(
+  static _i10.PageInfo page = _i10.PageInfo(
     name,
     builder: (data) {
       return const _i2.HomePage();
@@ -64,11 +66,11 @@ class HomeRoute extends _i9.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i3.IceBreakingPage]
-class IceBreakingRoute extends _i9.PageRouteInfo<IceBreakingRouteArgs> {
+class IceBreakingRoute extends _i10.PageRouteInfo<IceBreakingRouteArgs> {
   IceBreakingRoute({
-    _i10.Key? key,
-    required _i11.QuestionEntity question,
-    List<_i9.PageRouteInfo>? children,
+    _i11.Key? key,
+    required _i12.QuestionEntity question,
+    List<_i10.PageRouteInfo>? children,
   }) : super(
          IceBreakingRoute.name,
          args: IceBreakingRouteArgs(key: key, question: question),
@@ -77,7 +79,7 @@ class IceBreakingRoute extends _i9.PageRouteInfo<IceBreakingRouteArgs> {
 
   static const String name = 'IceBreakingRoute';
 
-  static _i9.PageInfo page = _i9.PageInfo(
+  static _i10.PageInfo page = _i10.PageInfo(
     name,
     builder: (data) {
       final args = data.argsAs<IceBreakingRouteArgs>();
@@ -89,9 +91,9 @@ class IceBreakingRoute extends _i9.PageRouteInfo<IceBreakingRouteArgs> {
 class IceBreakingRouteArgs {
   const IceBreakingRouteArgs({this.key, required this.question});
 
-  final _i10.Key? key;
+  final _i11.Key? key;
 
-  final _i11.QuestionEntity question;
+  final _i12.QuestionEntity question;
 
   @override
   String toString() {
@@ -111,13 +113,13 @@ class IceBreakingRouteArgs {
 
 /// generated route for
 /// [_i4.InterviewBriefingPage]
-class InterviewBriefingRoute extends _i9.PageRouteInfo<void> {
-  const InterviewBriefingRoute({List<_i9.PageRouteInfo>? children})
+class InterviewBriefingRoute extends _i10.PageRouteInfo<void> {
+  const InterviewBriefingRoute({List<_i10.PageRouteInfo>? children})
     : super(InterviewBriefingRoute.name, initialChildren: children);
 
   static const String name = 'InterviewBriefingRoute';
 
-  static _i9.PageInfo page = _i9.PageInfo(
+  static _i10.PageInfo page = _i10.PageInfo(
     name,
     builder: (data) {
       return const _i4.InterviewBriefingPage();
@@ -127,13 +129,13 @@ class InterviewBriefingRoute extends _i9.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i5.LoginPage]
-class LoginRoute extends _i9.PageRouteInfo<void> {
-  const LoginRoute({List<_i9.PageRouteInfo>? children})
+class LoginRoute extends _i10.PageRouteInfo<void> {
+  const LoginRoute({List<_i10.PageRouteInfo>? children})
     : super(LoginRoute.name, initialChildren: children);
 
   static const String name = 'LoginRoute';
 
-  static _i9.PageInfo page = _i9.PageInfo(
+  static _i10.PageInfo page = _i10.PageInfo(
     name,
     builder: (data) {
       return const _i5.LoginPage();
@@ -142,12 +144,28 @@ class LoginRoute extends _i9.PageRouteInfo<void> {
 }
 
 /// generated route for
-/// [_i6.OnInterviewPage]
-class OnInterviewRoute extends _i9.PageRouteInfo<OnInterviewRouteArgs> {
+/// [_i6.MissionBriefingPage]
+class MissionBriefingRoute extends _i10.PageRouteInfo<void> {
+  const MissionBriefingRoute({List<_i10.PageRouteInfo>? children})
+    : super(MissionBriefingRoute.name, initialChildren: children);
+
+  static const String name = 'MissionBriefingRoute';
+
+  static _i10.PageInfo page = _i10.PageInfo(
+    name,
+    builder: (data) {
+      return const _i6.MissionBriefingPage();
+    },
+  );
+}
+
+/// generated route for
+/// [_i7.OnInterviewPage]
+class OnInterviewRoute extends _i10.PageRouteInfo<OnInterviewRouteArgs> {
   OnInterviewRoute({
-    _i10.Key? key,
-    required _i11.QuestionEntity question,
-    List<_i9.PageRouteInfo>? children,
+    _i11.Key? key,
+    required _i12.QuestionEntity question,
+    List<_i10.PageRouteInfo>? children,
   }) : super(
          OnInterviewRoute.name,
          args: OnInterviewRouteArgs(key: key, question: question),
@@ -156,11 +174,11 @@ class OnInterviewRoute extends _i9.PageRouteInfo<OnInterviewRouteArgs> {
 
   static const String name = 'OnInterviewRoute';
 
-  static _i9.PageInfo page = _i9.PageInfo(
+  static _i10.PageInfo page = _i10.PageInfo(
     name,
     builder: (data) {
       final args = data.argsAs<OnInterviewRouteArgs>();
-      return _i6.OnInterviewPage(key: args.key, question: args.question);
+      return _i7.OnInterviewPage(key: args.key, question: args.question);
     },
   );
 }
@@ -168,9 +186,9 @@ class OnInterviewRoute extends _i9.PageRouteInfo<OnInterviewRouteArgs> {
 class OnInterviewRouteArgs {
   const OnInterviewRouteArgs({this.key, required this.question});
 
-  final _i10.Key? key;
+  final _i11.Key? key;
 
-  final _i11.QuestionEntity question;
+  final _i12.QuestionEntity question;
 
   @override
   String toString() {
@@ -189,33 +207,33 @@ class OnInterviewRouteArgs {
 }
 
 /// generated route for
-/// [_i7.PreInterviewPage]
-class PreInterviewRoute extends _i9.PageRouteInfo<void> {
-  const PreInterviewRoute({List<_i9.PageRouteInfo>? children})
+/// [_i8.PreInterviewPage]
+class PreInterviewRoute extends _i10.PageRouteInfo<void> {
+  const PreInterviewRoute({List<_i10.PageRouteInfo>? children})
     : super(PreInterviewRoute.name, initialChildren: children);
 
   static const String name = 'PreInterviewRoute';
 
-  static _i9.PageInfo page = _i9.PageInfo(
+  static _i10.PageInfo page = _i10.PageInfo(
     name,
     builder: (data) {
-      return const _i7.PreInterviewPage();
+      return const _i8.PreInterviewPage();
     },
   );
 }
 
 /// generated route for
-/// [_i8.SmartCameraPage]
-class SmartCameraRoute extends _i9.PageRouteInfo<void> {
-  const SmartCameraRoute({List<_i9.PageRouteInfo>? children})
+/// [_i9.SmartCameraPage]
+class SmartCameraRoute extends _i10.PageRouteInfo<void> {
+  const SmartCameraRoute({List<_i10.PageRouteInfo>? children})
     : super(SmartCameraRoute.name, initialChildren: children);
 
   static const String name = 'SmartCameraRoute';
 
-  static _i9.PageInfo page = _i9.PageInfo(
+  static _i10.PageInfo page = _i10.PageInfo(
     name,
     builder: (data) {
-      return const _i8.SmartCameraPage();
+      return const _i9.SmartCameraPage();
     },
   );
 }

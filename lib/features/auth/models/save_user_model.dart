@@ -28,4 +28,8 @@ class SaveUserModel {
       'photoUrl': photoUrl,
     };
   }
+
+  @override
+  String toString() =>
+      'SaveUserModel(id: $id, email: $email, displayName: $displayName, photoUrl: $photoUrl)';
 }

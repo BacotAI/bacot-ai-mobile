@@ -19,7 +19,7 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    testApi();
+    // testApi();
   }
 
   Future<void> testApi() async {

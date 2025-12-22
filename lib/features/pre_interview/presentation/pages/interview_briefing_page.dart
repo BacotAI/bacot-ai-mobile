@@ -4,6 +4,7 @@ import '../widgets/briefing_card.dart';
 import '../widgets/briefing_tag.dart';
 import '../widgets/pulse_animation.dart';
 import '../widgets/preparation_help_bottom_sheet.dart';
+import '../../../../app/router/app_router.gr.dart';
 
 @RoutePage()
 class InterviewBriefingPage extends StatelessWidget {
@@ -130,7 +131,8 @@ class InterviewBriefingPage extends StatelessWidget {
               ),
               actionLabel: 'Mulai',
               actionIcon: Icons.arrow_forward_rounded,
-              onActionPressed: () {},
+              onActionPressed: () =>
+                  context.router.push(const MissionBriefingRoute()),
             ),
             BriefingCard(
               title: 'Collaboration',

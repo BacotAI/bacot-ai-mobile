@@ -9,7 +9,6 @@ class AppRouter extends RootStackRouter {
 
   @override
   List<AutoRoute> get routes => [
-    // AutoRoute(page: HomeRoute.page, initial: true),
     AutoRoute(page: LoginRoute.page, initial: true),
     AutoRoute(page: HomeRoute.page, guards: [authGuard]),
     AutoRoute(page: AudioInputRoute.page, guards: [authGuard]),
@@ -18,5 +17,6 @@ class AppRouter extends RootStackRouter {
     AutoRoute(page: IceBreakingRoute.page, guards: [authGuard]),
     AutoRoute(page: OnInterviewRoute.page, guards: [authGuard]),
     AutoRoute(page: InterviewBriefingRoute.page, guards: [authGuard]),
+    AutoRoute(page: MissionBriefingRoute.page, guards: [authGuard]),
   ];
 }
