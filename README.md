@@ -36,6 +36,8 @@ flutter pub run build_runner build
 ## Auth
 <img width="511" height="541" alt="image" src="https://github.com/user-attachments/assets/7c6d48f8-3f01-401e-8ca4-be81ba7e8ac5" />
 
+<img width="195" height="401" alt="image" src="https://github.com/user-attachments/assets/fa714ec5-7638-48ab-af57-b9c1cc10edea" />
+
 ## Home
 <img width="221" height="649" alt="image" src="https://github.com/user-attachments/assets/4f203b07-227a-4882-81d9-6508047c9de7" />
 
