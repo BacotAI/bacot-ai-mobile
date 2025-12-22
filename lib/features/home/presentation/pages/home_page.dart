@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:smart_interview_ai/app/di.dart';
 import 'package:smart_interview_ai/app/router/app_router.gr.dart';
 import 'package:smart_interview_ai/features/home/presentation/widgets/feature_card.dart';
 
@@ -26,12 +27,34 @@ class HomePage extends StatelessWidget {
                   height: 1.2,
                 ),
               ),
+
               const SizedBox(height: 16),
               Text(
                 'Metode Testing AI',
                 style: Theme.of(
                   context,
                 ).textTheme.bodyLarge?.copyWith(color: const Color(0xFF64748B)),
+              ),
+              const SizedBox(height: 16),
+              SizedBox(
+                width: double.infinity,
+                height: 46,
+                child: OutlinedButton(
+                  onPressed: () async {
+                    await DI.authRepository.logout();
+
+                    if (!context.mounted) return;
+
+                    context.router.replaceAll([const LoginRoute()]);
+                  },
+                  child: const Text(
+                    "Keluar",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
+                    ),
+                  ),
+                ),
               ),
               const SizedBox(height: 48),
               Expanded(
