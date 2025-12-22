@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/tulkun-icon-transparent.png" width="100" alt="TulKun Icon" />
+  <img src="assets/icon/tulkun-icon-transparent.png" width="100" alt="TulKun Icon" />
 </p>
 
 
