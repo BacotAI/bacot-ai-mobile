@@ -1,5 +1,5 @@
-# smart-interview-ai (Bacot AI)
-Smart Interview Assistant analisis interview berbasis AI yang mampu mendeteksi ekspresi wajah, intonasi suara, bahasa tubuh, dan gesture kandidat selama proses wawancara. 
+# TulKun Project (Bacot AI)
+TulKun adalah aplikasi smart interview berbasis AI yang mampu mendeteksi ekspresi wajah, intonasi suara, bahasa tubuh, dan gesture kandidat selama proses wawancara. 
 
 Aplikasi ini juga memanfaatkan model AI dari OpenAI untuk menganalisis konteks percakapan dari audio dan video, kemudian menghasilkan skor penilaian berdasarkan kompetensi inti seperti:
 	•	Komunikasi
@@ -31,3 +31,8 @@ Command kode (seperti auto_route, json_serializable, atau dependency injection) 
 ```bash
 flutter pub run build_runner build
 ```
+
+# UI/UX
+## Auth
+<img width="511" height="541" alt="image" src="https://github.com/user-attachments/assets/7c6d48f8-3f01-401e-8ca4-be81ba7e8ac5" />
+
