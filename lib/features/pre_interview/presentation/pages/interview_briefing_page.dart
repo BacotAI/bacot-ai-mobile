@@ -75,7 +75,7 @@ class InterviewBriefingPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              'Your Briefing',
+              'Briefing Dulu',
               style: TextStyle(
                 fontSize: 40,
                 fontWeight: FontWeight.w900,
@@ -103,7 +103,7 @@ class InterviewBriefingPage extends StatelessWidget {
                 ),
                 const SizedBox(width: 12),
                 const Text(
-                  'Estimated duration: 15 min',
+                  'Durasi: 15 min',
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
