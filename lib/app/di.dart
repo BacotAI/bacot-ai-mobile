@@ -2,6 +2,8 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get_it/get_it.dart';
+import 'package:smart_interview_ai/app/router/app_router.dart';
+import 'package:smart_interview_ai/app/router/auth_guard.dart';
 import 'package:smart_interview_ai/core/config/env.dart';
 import 'package:smart_interview_ai/core/network/api_client.dart';
 import 'package:smart_interview_ai/core/network/dio_api_client.dart';
@@ -20,10 +22,17 @@ import 'package:smart_interview_ai/features/on_interview/presentation/cubit/on_i
 final sl = GetIt.instance;
 
 class DI {
+  static late final AuthRepository authRepository;
+  static late final AuthGuard authGuard;
+  static late final AppRouter appRouter;
+
   static Future<void> init() async {
     await dotenv.load(fileName: '.env');
 
     sl.registerLazySingleton<ApiClient>(() => _buildApiClient());
+    authGuard = AuthGuard();
+    appRouter = AppRouter(authGuard);
+
     sl.registerFactory<SampleRepository>(
       () => SampleRepositoryImpl(apiClient: sl()),
     );
@@ -53,6 +62,4 @@ class DI {
   }
 
   static Future<void> initEnv() async => await dotenv.load(fileName: '.env');
-
-  static late final AuthRepository authRepository;
 }
