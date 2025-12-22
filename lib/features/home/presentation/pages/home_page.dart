@@ -55,12 +55,34 @@ class _HomePageState extends State<HomePage> {
                   height: 1.2,
                 ),
               ),
+
               const SizedBox(height: 16),
               Text(
                 'Metode Testing AI',
                 style: Theme.of(
                   context,
                 ).textTheme.bodyLarge?.copyWith(color: const Color(0xFF64748B)),
+              ),
+              const SizedBox(height: 16),
+              SizedBox(
+                width: double.infinity,
+                height: 46,
+                child: OutlinedButton(
+                  onPressed: () async {
+                    await DI.authRepository.logout();
+
+                    if (!context.mounted) return;
+
+                    context.router.replaceAll([const LoginRoute()]);
+                  },
+                  child: const Text(
+                    "Keluar",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
+                    ),
+                  ),
+                ),
               ),
               const SizedBox(height: 48),
               Expanded(
@@ -71,7 +93,9 @@ class _HomePageState extends State<HomePage> {
                       child: const ListTile(
                         leading: Icon(Icons.touch_app_rounded),
                         title: Text('LogarteMagicalTap'),
-                        subtitle: Text('Tap 10 times to attach the magical button.'),
+                        subtitle: Text(
+                          'Tap 10 times to attach the magical button.',
+                        ),
                       ),
                     ),
                     const SizedBox(height: 16),
@@ -88,7 +112,9 @@ class _HomePageState extends State<HomePage> {
                       subtitle: 'Rekam dan analisis audio',
                       icon: Icons.mic_rounded,
                       color: const Color(0xFF3B82F6), // Blue
-                      onTap: () => context.router.push(AudioInputRoute()), // Will fix null later
+                      onTap: () => context.router.push(
+                        AudioInputRoute(),
+                      ), // Will fix null later
                     ),
                     const SizedBox(height: 16),
                     FeatureCard(
@@ -96,7 +122,8 @@ class _HomePageState extends State<HomePage> {
                       subtitle: 'Analisis postur dan wajah real-time',
                       icon: Icons.face_retouching_natural_rounded,
                       color: const Color(0xFF8B5CF6), // Violet
-                      onTap: () => context.router.push(const SmartCameraRoute()),
+                      onTap: () =>
+                          context.router.push(const SmartCameraRoute()),
                     ),
                     const SizedBox(height: 16),
                     FeatureCard(
@@ -104,7 +131,8 @@ class _HomePageState extends State<HomePage> {
                       subtitle: 'Mulai dengan pilihan pertanyaan',
                       icon: Icons.menu_book_rounded,
                       color: const Color(0xFFF59E0B), // Amber
-                      onTap: () => context.router.push(const PreInterviewRoute()),
+                      onTap: () =>
+                          context.router.push(const PreInterviewRoute()),
                     ),
                   ],
                 ),
