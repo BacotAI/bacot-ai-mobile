@@ -4,6 +4,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:smart_interview_ai/app/di.dart';
 import 'package:smart_interview_ai/app/router/app_router.gr.dart';
+import 'package:smart_interview_ai/core/helper/log_helper.dart';
 import 'package:smart_interview_ai/core/helper/presentation_helper.dart';
 import 'package:smart_interview_ai/core/utils/const.dart';
 import 'package:smart_interview_ai/core/widgets/snackbar/custom_snackbar.dart';
@@ -82,9 +83,11 @@ class _LoginPageState extends State<LoginPage> {
 
   Future<void> _continueUser() async {
     setState(() => _isLoading = true);
+
     try {
       await DI.authRepository.continueWithSavedUser();
       if (!mounted) return;
+
       context.router.replace(const HomeRoute());
     } catch (e) {
       PresentationHelper.showCustomSnackBar(
