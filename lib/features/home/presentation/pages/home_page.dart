@@ -19,7 +19,7 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    testApi();
+    // testApi();
   }
 
   Future<void> testApi() async {
@@ -132,7 +132,7 @@ class _HomePageState extends State<HomePage> {
                       icon: Icons.menu_book_rounded,
                       color: const Color(0xFFF59E0B), // Amber
                       onTap: () =>
-                          context.router.push(const PreInterviewRoute()),
+                          context.router.push(const InterviewBriefingRoute()),
                     ),
                   ],
                 ),
