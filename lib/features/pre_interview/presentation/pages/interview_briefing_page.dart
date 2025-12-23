@@ -1,10 +1,10 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:smart_interview_ai/app/router/app_router.gr.dart';
 import '../widgets/briefing_card.dart';
 import '../widgets/briefing_tag.dart';
 import '../widgets/pulse_animation.dart';
 import '../widgets/preparation_help_bottom_sheet.dart';
-import '../../../../app/router/app_router.gr.dart';
 
 @RoutePage()
 class InterviewBriefingPage extends StatelessWidget {

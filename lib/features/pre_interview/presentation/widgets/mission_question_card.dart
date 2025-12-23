@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:smart_interview_ai/core/widgets/divider/dashed_divider.dart';
 import 'briefing_tag.dart';
+import 'hr_insight_bottom_sheet.dart';
 
 class MissionQuestionCard extends StatelessWidget {
   final String questionNumber;
@@ -106,7 +107,17 @@ class MissionQuestionCard extends StatelessWidget {
                   child: _buildActionButton(
                     icon: Icons.lightbulb_outline,
                     label: 'HR Insight',
-                    onPressed: () {},
+                    iconColor: const Color(0xFF06B6D4),
+                    onPressed: () => HrInsightBottomSheet.show(
+                      context,
+                      isPremium: false,
+                      question: question,
+                      recruiterIntent:
+                          'Recruiters ask this to test your maturity and composure. They want to verify you can de-escalate tension and move forward productively without holding grudges.',
+                      strategyMethod: 'STAR method',
+                      strategyDescription:
+                          'Focus 70% of your response on the Actions taken.',
+                    ),
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -114,6 +125,7 @@ class MissionQuestionCard extends StatelessWidget {
                   child: _buildActionButton(
                     icon: Icons.rocket_launch_outlined,
                     label: 'Boost Answer',
+                    iconColor: const Color(0xFF6366F1),
                     onPressed: () {},
                   ),
                 ),
@@ -129,31 +141,35 @@ class MissionQuestionCard extends StatelessWidget {
     required IconData icon,
     required String label,
     required VoidCallback onPressed,
+    Color iconColor = const Color(0xFF64748B),
   }) {
-    return InkWell(
-      onTap: onPressed,
-      borderRadius: BorderRadius.circular(100),
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 12),
-        decoration: BoxDecoration(
-          color: const Color(0xFFF8FAFC),
-          borderRadius: BorderRadius.circular(100),
-          border: Border.all(color: const Color(0xFFF1F5F9)),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, size: 18, color: const Color(0xFF64748B)),
-            const SizedBox(width: 8),
-            Text(
-              label,
-              style: const TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w700,
-                color: Color(0xFF64748B),
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onPressed,
+        borderRadius: BorderRadius.circular(16),
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 14),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: Colors.black.withAlpha(20), width: 1.5),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(icon, size: 18, color: iconColor),
+              const SizedBox(width: 10),
+              Text(
+                label,
+                style: const TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w800,
+                  color: Color(0xFF1E293B),
+                  letterSpacing: -0.2,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

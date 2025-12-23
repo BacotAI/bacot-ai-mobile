@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:smart_interview_ai/core/utils/sizes.dart';
+import 'package:smart_interview_ai/core/widgets/button/start_interview_button.dart';
 import '../widgets/mission_question_card.dart';
 import '../widgets/mission_help_bottom_sheet.dart';
 
@@ -30,18 +31,33 @@ class MissionBriefingPage extends StatelessWidget {
         ),
         centerTitle: true,
         actions: [
-          TextButton(
-            onPressed: () => MissionHelpBottomSheet.show(context),
-            child: const Text(
-              'Help',
-              style: TextStyle(
-                color: Color(0xFF94A3B8),
-                fontWeight: FontWeight.w800,
-                fontSize: 14,
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: InkWell(
+              onTap: () => MissionHelpBottomSheet.show(context),
+              borderRadius: BorderRadius.circular(20),
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF1F5F9),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: const Center(
+                  child: Text(
+                    'Help',
+                    style: TextStyle(
+                      color: Color(0xFF64748B),
+                      fontWeight: FontWeight.w700,
+                      fontSize: 14,
+                    ),
+                  ),
+                ),
               ),
             ),
           ),
-          const SizedBox(width: 8),
         ],
       ),
       body: Stack(
@@ -109,116 +125,28 @@ class MissionBriefingPage extends StatelessWidget {
                       'Di mana Anda melihat industri akan bergerak selama 5 tahun mendatang?',
                 ),
                 const SizedBox(height: 8),
-                _buildIcebreakingButton(),
-                const SizedBox(height: 40),
               ],
             ),
           ),
-          _buildFloatingStartButton(),
+          _buildFloatingStartButton(isDisabled: true),
         ],
       ),
     );
   }
 
-  Widget _buildIcebreakingButton() {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(vertical: 16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: const Color(0xFFF1F5F9), width: 1.5),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.video_camera_front_outlined,
-            size: 20,
-            color: const Color(0xFF64748B).withAlpha(200),
-          ),
-          const SizedBox(width: 12),
-          const Text(
-            'Icebreaking Session',
-            style: TextStyle(
-              fontSize: 15,
-              fontWeight: FontWeight.w700,
-              color: Color(0xFF64748B),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildFloatingStartButton() {
+  Widget _buildFloatingStartButton({bool isDisabled = false}) {
     return Positioned(
-      bottom: 24,
+      bottom: SizesApp.margin * 2,
       left: 24,
       right: 24,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: double.infinity,
-            height: 64,
-            decoration: BoxDecoration(
-              color: const Color(0xFF0F172A),
-              borderRadius: BorderRadius.circular(100),
-              boxShadow: [
-                BoxShadow(
-                  color: const Color(0xFF0F172A).withAlpha(50),
-                  blurRadius: 20,
-                  offset: const Offset(0, 10),
-                ),
-              ],
-            ),
-            child: Material(
-              color: Colors.transparent,
-              child: InkWell(
-                onTap: () {},
-                borderRadius: BorderRadius.circular(100),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24),
-                  child: Row(
-                    children: [
-                      const Icon(
-                        Icons.lock_outline,
-                        color: Colors.white,
-                        size: 20,
-                      ),
-                      const Spacer(),
-                      const Text(
-                        'Start Interview',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                          fontWeight: FontWeight.w800,
-                        ),
-                      ),
-                      const Spacer(),
-                      const Icon(
-                        Icons.arrow_forward_rounded,
-                        color: Colors.white,
-                        size: 20,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(height: 12),
-          Text(
-            'SESSION LOCKED & RECORDED UPON START',
-            style: TextStyle(
-              fontSize: 10,
-              fontWeight: FontWeight.w800,
-              color: const Color(0xFF94A3B8).withAlpha(150),
-              letterSpacing: 1.2,
-            ),
-          ),
-        ],
+      child: StartInterviewButton(
+        label: 'START',
+        isDisabled: isDisabled,
+        leftIcon: Icons.lock_outline,
+        rightIcon: Icons.arrow_forward_rounded,
+        onTap: () {
+          // TODO: Implement start logic
+        },
       ),
     );
   }
