@@ -1,0 +1,25 @@
+flavors:
+  dev:
+    app:
+      name: "Tulkun dev"
+
+    android:
+      applicationId: "id.smartInterviewAi.dev"
+    ios:
+      bundleId: "id.smartInterviewAi.dev"
+  uat:
+    app:
+      name: "Tulkun uat"
+
+    android:
+      applicationId: "id.smartInterviewAi.uat"
+    ios:
+      bundleId: "id.smartInterviewAi.uat"
+  prod:
+    app:
+      name: "Tulkun"
+
+    android:
+      applicationId: "id.smartInterviewAi"
+    ios:
+      bundleId: "id.smartInterviewAi"

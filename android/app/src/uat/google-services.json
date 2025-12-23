@@ -1,0 +1,29 @@
+{
+    "project_info": {
+        "project_number": "1002593913652",
+        "project_id": "smart-interview-ai-mobile",
+        "storage_bucket": "smart-interview-ai-mobile.firebasestorage.app"
+    },
+    "client": [
+        {
+            "client_info": {
+                "mobilesdk_app_id": "1:1002593913652:android:6aa514841aeda98d7e7361",
+                "android_client_info": {
+                    "package_name": "id.smartInterviewAi.uat"
+                }
+            },
+            "oauth_client": [],
+            "api_key": [
+                {
+                    "current_key": "AIzaSyAufhpyol6OcpsH6F4S9P4Sr8qFsn13BLc"
+                }
+            ],
+            "services": {
+                "appinvite_service": {
+                    "other_platform_oauth_client": []
+                }
+            }
+        }
+    ],
+    "configuration_version": "1"
+}
