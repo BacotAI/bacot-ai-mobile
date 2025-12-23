@@ -9,7 +9,7 @@
             "client_info": {
                 "mobilesdk_app_id": "1:1002593913652:android:6aa514841aeda98d7e7361",
                 "android_client_info": {
-                    "package_name": "com.example.smart_interview_ai"
+                    "package_name": "id.smartInterviewAi.dev"
                 }
             },
             "oauth_client": [],

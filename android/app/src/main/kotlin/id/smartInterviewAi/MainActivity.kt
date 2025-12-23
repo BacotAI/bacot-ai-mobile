@@ -1,4 +1,4 @@
-package com.example.smart_interview_ai
+package id.smartInterviewAi
 
 import io.flutter.embedding.android.FlutterActivity
 
