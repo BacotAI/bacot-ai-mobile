@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:smart_interview_ai/core/widgets/divider/dashed_divider.dart';
 import 'briefing_tag.dart';
 
 class MissionQuestionCard extends StatelessWidget {
@@ -6,7 +7,6 @@ class MissionQuestionCard extends StatelessWidget {
   final String category;
   final String duration;
   final String question;
-  final String focus;
   final Color categoryColor;
   final Color categoryBgColor;
   final bool isActive;
@@ -17,7 +17,6 @@ class MissionQuestionCard extends StatelessWidget {
     required this.category,
     required this.duration,
     required this.question,
-    required this.focus,
     this.categoryColor = const Color(0xFF6366F1),
     this.categoryBgColor = const Color(0xFFEEF2FF),
     this.isActive = false,
@@ -29,13 +28,13 @@ class MissionQuestionCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 24),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(32),
-        border: Border.all(color: const Color(0xFFF1F5F9), width: 1),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: const Color(0xFFF1F5F9), width: 1.5),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withAlpha(5),
-            blurRadius: 20,
-            offset: const Offset(0, 4),
+            color: Colors.black.withAlpha(8),
+            blurRadius: 24,
+            offset: const Offset(0, 8),
           ),
         ],
       ),
@@ -47,21 +46,20 @@ class MissionQuestionCard extends StatelessWidget {
             Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 6,
-                  ),
+                  padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: isActive
-                        ? const Color(0xFF6366F1)
-                        : const Color(0xFFF1F5F9),
-                    borderRadius: BorderRadius.circular(100),
+                    color: Colors.white,
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: const Color(0xFFE2E8F0),
+                      width: 1,
+                    ),
                   ),
                   child: Text(
-                    questionNumber,
-                    style: TextStyle(
-                      color: isActive ? Colors.white : const Color(0xFF64748B),
-                      fontWeight: FontWeight.w900,
+                    questionNumber.padLeft(2, '0').replaceAll('Q', ''),
+                    style: const TextStyle(
+                      color: Color(0xFF64748B),
+                      fontWeight: FontWeight.w700,
                       fontSize: 12,
                     ),
                   ),
@@ -74,16 +72,16 @@ class MissionQuestionCard extends StatelessWidget {
                 ),
                 const Spacer(),
                 Icon(
-                  Icons.timer_outlined,
+                  Icons.watch_later,
                   size: 16,
-                  color: const Color(0xFF64748B).withAlpha(150),
+                  color: const Color(0xFF64748B),
                 ),
                 const SizedBox(width: 6),
                 Text(
                   duration,
                   style: const TextStyle(
                     fontSize: 13,
-                    fontWeight: FontWeight.w600,
+                    fontWeight: FontWeight.w700,
                     color: Color(0xFF64748B),
                   ),
                 ),
@@ -95,39 +93,18 @@ class MissionQuestionCard extends StatelessWidget {
               style: const TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.w800,
-                color: Color(0xFF1E293B),
+                color: Color(0xFF0F172A),
                 height: 1.3,
               ),
             ),
-            const SizedBox(height: 16),
-            const Divider(color: Color(0xFFF1F5F9), height: 1),
-            const SizedBox(height: 16),
-            Row(
-              children: [
-                const Icon(
-                  Icons.light_mode_rounded,
-                  size: 16,
-                  color: Color(0xFF94A3B8),
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    'Focus: $focus',
-                    style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                      color: Color(0xFF64748B),
-                    ),
-                  ),
-                ),
-              ],
-            ),
+            const SizedBox(height: 24),
+            const DashedDivider(),
             const SizedBox(height: 24),
             Row(
               children: [
                 Expanded(
                   child: _buildActionButton(
-                    icon: Icons.groups_rounded,
+                    icon: Icons.lightbulb_outline,
                     label: 'HR Insight',
                     onPressed: () {},
                   ),
@@ -135,9 +112,8 @@ class MissionQuestionCard extends StatelessWidget {
                 const SizedBox(width: 12),
                 Expanded(
                   child: _buildActionButton(
-                    icon: Icons.auto_awesome_rounded,
+                    icon: Icons.rocket_launch_outlined,
                     label: 'Boost Answer',
-                    isPrimary: true,
                     onPressed: () {},
                   ),
                 ),
@@ -153,7 +129,6 @@ class MissionQuestionCard extends StatelessWidget {
     required IconData icon,
     required String label,
     required VoidCallback onPressed,
-    bool isPrimary = false,
   }) {
     return InkWell(
       onTap: onPressed,
@@ -161,33 +136,21 @@ class MissionQuestionCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 12),
         decoration: BoxDecoration(
-          color: isPrimary ? const Color(0xFFFFF1F2) : const Color(0xFFF8FAFC),
+          color: const Color(0xFFF8FAFC),
           borderRadius: BorderRadius.circular(100),
-          border: Border.all(
-            color: isPrimary
-                ? const Color(0xFFFECDD3)
-                : const Color(0xFFE2E8F0),
-          ),
+          border: Border.all(color: const Color(0xFFF1F5F9)),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              icon,
-              size: 18,
-              color: isPrimary
-                  ? const Color(0xFFFB7185)
-                  : const Color(0xFF64748B),
-            ),
+            Icon(icon, size: 18, color: const Color(0xFF64748B)),
             const SizedBox(width: 8),
             Text(
               label,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 13,
-                fontWeight: FontWeight.w800,
-                color: isPrimary
-                    ? const Color(0xFFE11D48)
-                    : const Color(0xFF475569),
+                fontWeight: FontWeight.w700,
+                color: Color(0xFF64748B),
               ),
             ),
           ],
