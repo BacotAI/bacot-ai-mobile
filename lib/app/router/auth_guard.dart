@@ -12,7 +12,7 @@ class AuthGuard implements AutoRouteGuard {
   ) async {
     final isLoggedIn = await DI.authRepository.isLoggedIn();
 
-    if (!isLoggedIn) {
+    if (isLoggedIn) {
       resolver.next(true);
     } else {
       router.replace(const LoginRoute());
