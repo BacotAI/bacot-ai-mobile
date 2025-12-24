@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math' as math;
 import 'package:camera/camera.dart';
 import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
 import 'package:google_mlkit_pose_detection/google_mlkit_pose_detection.dart';
@@ -13,8 +14,10 @@ class InterviewRecorderService {
   final ObjectDetectorService _objectDetectorService = ObjectDetectorService();
 
   bool _isBusy = false;
+  double _currentAudioLevel = 0.0;
 
   CameraController? get cameraController => _cameraController;
+  double get currentAudioLevel => _currentAudioLevel;
 
   Future<void> initialize() async {
     final cameras = await availableCameras();
@@ -25,8 +28,8 @@ class InterviewRecorderService {
 
     _cameraController = CameraController(
       frontCamera,
-      ResolutionPreset.medium, // Balance quality and performance
-      enableAudio: true, // We need audio for the interview
+      ResolutionPreset.medium,
+      enableAudio: true,
       imageFormatGroup: Platform.isAndroid
           ? ImageFormatGroup.nv21
           : ImageFormatGroup.bgra8888,
@@ -39,6 +42,10 @@ class InterviewRecorderService {
     Function(InputImage inputImage, CameraImage cameraImage) onImage,
   ) {
     _cameraController?.startImageStream((image) async {
+      // Mock audio level for now as camera plugin doesn't directly expose it during stream
+      // In a real production app, we might use a separate audio recording plugin for levels
+      _currentAudioLevel = math.Random().nextDouble();
+
       if (_isBusy) return;
       _isBusy = true;
 
@@ -56,6 +63,29 @@ class InterviewRecorderService {
     });
   }
 
+  Future<void> stopImageStream() async {
+    if (_cameraController != null &&
+        _cameraController!.value.isStreamingImages) {
+      await _cameraController!.stopImageStream();
+    }
+  }
+
+  Future<void> startVideoRecording() async {
+    if (_cameraController != null && _cameraController!.value.isInitialized) {
+      if (!_cameraController!.value.isRecordingVideo) {
+        await _cameraController!.startVideoRecording();
+      }
+    }
+  }
+
+  Future<XFile?> stopVideoRecording() async {
+    if (_cameraController != null &&
+        _cameraController!.value.isRecordingVideo) {
+      return await _cameraController!.stopVideoRecording();
+    }
+    return null;
+  }
+
   Future<List<Face>> processFace(InputImage inputImage) async {
     return _faceDetectorService.processImage(inputImage);
   }
@@ -69,8 +99,16 @@ class InterviewRecorderService {
   }
 
   Future<void> dispose() async {
-    await _cameraController?.stopImageStream();
-    await _cameraController?.dispose();
+    if (_cameraController != null) {
+      if (_cameraController!.value.isStreamingImages) {
+        await _cameraController!.stopImageStream();
+      }
+      if (_cameraController!.value.isRecordingVideo) {
+        await _cameraController!.stopVideoRecording();
+      }
+      await _cameraController!.dispose();
+      _cameraController = null;
+    }
     _faceDetectorService.dispose();
     _poseDetectorService.dispose();
     _objectDetectorService.dispose();

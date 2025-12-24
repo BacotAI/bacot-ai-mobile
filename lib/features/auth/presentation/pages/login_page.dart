@@ -6,7 +6,6 @@ import 'package:smart_interview_ai/app/di.dart';
 import 'package:smart_interview_ai/app/router/app_router.gr.dart';
 import 'package:smart_interview_ai/core/helper/presentation_helper.dart';
 import 'package:smart_interview_ai/core/utils/const.dart';
-import 'package:smart_interview_ai/core/utils/sizes.dart';
 import 'package:smart_interview_ai/core/widgets/snackbar/custom_snackbar.dart';
 import 'package:smart_interview_ai/features/auth/models/save_user_model.dart';
 import 'package:smart_interview_ai/features/auth/models/user_model.dart';

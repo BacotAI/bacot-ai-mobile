@@ -19,7 +19,9 @@ import 'package:smart_interview_ai/features/pre_interview/domain/repositories/pr
 import 'package:smart_interview_ai/features/pre_interview/data/repositories/pre_interview_repository_impl.dart';
 import 'package:smart_interview_ai/features/pre_interview/presentation/cubit/pre_interview_cubit.dart';
 import 'package:smart_interview_ai/core/services/interview_recorder_service.dart';
+import 'package:smart_interview_ai/features/audio_input/services/whisper_service.dart';
 import 'package:smart_interview_ai/features/on_interview/presentation/cubit/on_interview_cubit.dart';
+import 'package:smart_interview_ai/features/pre_interview/domain/entities/question_entity.dart';
 
 final sl = GetIt.instance;
 
@@ -45,7 +47,14 @@ class DI {
     sl.registerLazySingleton<InterviewRecorderService>(
       () => InterviewRecorderService(),
     );
-    sl.registerFactory(() => OnInterviewCubit(recorderService: sl()));
+    sl.registerLazySingleton<WhisperService>(() => WhisperService());
+    sl.registerFactoryParam<OnInterviewCubit, List<QuestionEntity>, void>(
+      (questions, _) => OnInterviewCubit(
+        recorderService: sl(),
+        whisperService: sl(),
+        questions: questions,
+      ),
+    );
     sl.registerLazySingleton<Logarte>(
       () => Logarte(
         password: 'tulkun-tul',

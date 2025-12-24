@@ -24,24 +24,7 @@ class ObjectDetectorService {
   }
 
   Future<void> _initializeDetectors() async {
-    // await _initializeMaskDetector();
     await _initializeCapDetector();
-  }
-
-  Future<void> _initializeMaskDetector() async {
-    final modelPath = await _copyAssetToFile(
-      'assets/ml/mask_detector_with_metadata.tflite',
-      'mask_detector_with_metadata.tflite',
-    );
-    LocalObjectDetectorOptions maskOptions = LocalObjectDetectorOptions(
-      mode: DetectionMode.stream,
-      modelPath: modelPath,
-      classifyObjects: true,
-      multipleObjects: true,
-      confidenceThreshold: 0.5,
-    );
-
-    _maskDetector = ObjectDetector(options: maskOptions);
   }
 
   Future<void> _initializeCapDetector() async {

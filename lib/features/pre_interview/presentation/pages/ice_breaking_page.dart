@@ -210,9 +210,7 @@ class _IceBreakingPageState extends State<IceBreakingPage>
               videoController: _videoController!,
               checklistController: _checklistController,
               onFinish: finishIceBreaking,
-              onSkip: () => context.router.replace(
-                OnInterviewRoute(question: widget.question),
-              ),
+              onSkip: () {},
               onBack: finishIceBreaking,
             )
           else
@@ -223,11 +221,7 @@ class _IceBreakingPageState extends State<IceBreakingPage>
               fadeController: _fadeController,
               onToggleRecording: _toggleRecording,
               onBack: () => context.router.back(),
-              onSkip: () {
-                context.router.replace(
-                  OnInterviewRoute(question: widget.question),
-                );
-              },
+              onSkip: () {},
             ),
 
           // EXIT ANIMATION OVERLAY
