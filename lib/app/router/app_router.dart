@@ -12,8 +12,8 @@ class AppRouter extends RootStackRouter {
 
   @override
   List<AutoRoute> get routes => [
-    AutoRoute(page: LoginRoute.page, initial: true),
-    AutoRoute(page: HomeRoute.page, guards: [authGuard]),
+    // AutoRoute(page: LoginRoute.page, initial: true),
+    AutoRoute(page: HomeRoute.page, guards: [authGuard], initial: true),
     AutoRoute(page: AudioInputRoute.page, guards: [authGuard]),
     AutoRoute(page: SmartCameraRoute.page, guards: [authGuard]),
     AutoRoute(page: PreInterviewRoute.page, guards: [authGuard]),

@@ -63,11 +63,24 @@ class OnInterviewBloc extends Bloc<OnInterviewEvent, OnInterviewState> {
 
     await countdownCompleter.future;
 
+    try {
+      await _recorderService.startVideoRecording();
+    } catch (e) {
+      debugPrint("Gagal memulai rekaman video: $e");
+    }
+
     _elapsedSeconds = 0;
     if (!isClosed) {
-      // emit(
-      //   OnInterviewRecording(elapsedSeconds: 0, totalDuration: _totalDuration),
-      // );
+      emit(
+        OnInterviewRecording(
+          currentQuestionIndex: 0,
+          totalQuestions: 0, // This should be passed in or managed
+          elapsedSeconds: 0,
+          totalDuration: _totalDuration,
+          canGoNext: false,
+          lastScoringResult: const ScoringResult(),
+        ),
+      );
     }
 
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
@@ -75,17 +88,12 @@ class OnInterviewBloc extends Bloc<OnInterviewEvent, OnInterviewState> {
       if (_elapsedSeconds >= _totalDuration) {
         add(const OnInterviewStopped());
       } else {
-        final lastResult = state is OnInterviewRecording
-            ? (state as OnInterviewRecording).lastScoringResult
-            : null;
-        if (!isClosed) {
-          // emit(
-          //   OnInterviewRecording(
-          //     elapsedSeconds: _elapsedSeconds,
-          //     totalDuration: _totalDuration,
-          //     lastScoringResult: lastResult,
-          //   ),
-          // );
+        if (!isClosed && state is OnInterviewRecording) {
+          emit(
+            (state as OnInterviewRecording).copyWith(
+              elapsedSeconds: _elapsedSeconds,
+            ),
+          );
         }
       }
     });
@@ -157,6 +165,13 @@ class OnInterviewBloc extends Bloc<OnInterviewEvent, OnInterviewState> {
         : null;
 
     emit(OnInterviewProcessing());
+
+    try {
+      await _recorderService.stopImageStream();
+      await _recorderService.stopVideoRecording();
+    } catch (e) {
+      debugPrint("Error stopping recording: $e");
+    }
 
     await Future.delayed(const Duration(seconds: 1));
     if (!isClosed) {

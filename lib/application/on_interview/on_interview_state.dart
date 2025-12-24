@@ -11,6 +11,8 @@ class OnInterviewInitial extends OnInterviewState {}
 
 class OnInterviewLoading extends OnInterviewState {}
 
+class OnInterviewReady extends OnInterviewState {}
+
 class OnInterviewCountdown extends OnInterviewState {
   final int validDuration;
 

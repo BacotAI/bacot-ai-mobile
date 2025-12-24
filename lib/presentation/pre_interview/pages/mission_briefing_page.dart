@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:smart_interview_ai/app/router/app_router.gr.dart';
 import 'package:smart_interview_ai/core/utils/sizes.dart';
 import 'package:smart_interview_ai/core/widgets/button/start_interview_button.dart';
 import 'package:smart_interview_ai/domain/pre_interview/entities/question_entity.dart';
@@ -155,26 +156,21 @@ class MissionBriefingPage extends StatelessWidget {
               ],
             ),
           ),
-          _buildFloatingStartButton(context, isDisabled: true),
+          Positioned(
+            bottom: SizesApp.margin * 2,
+            left: 24,
+            right: 24,
+            child: StartInterviewButton(
+              label: 'START',
+              isDisabled: false,
+              leftIcon: Icons.lock_outline,
+              rightIcon: Icons.arrow_forward_rounded,
+              onTap: () {
+                context.router.push(OnInterviewRoute(questions: mockQuestions));
+              },
+            ),
+          ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildFloatingStartButton(
-    BuildContext context, {
-    bool isDisabled = false,
-  }) {
-    return Positioned(
-      bottom: SizesApp.margin * 2,
-      left: 24,
-      right: 24,
-      child: StartInterviewButton(
-        label: 'START',
-        isDisabled: isDisabled,
-        leftIcon: Icons.lock_outline,
-        rightIcon: Icons.arrow_forward_rounded,
-        onTap: () {},
       ),
     );
   }

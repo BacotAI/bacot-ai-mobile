@@ -25,6 +25,9 @@ class InterviewRecorderService {
 
   Future<void> initialize() async {
     final cameras = await availableCameras();
+    if (cameras.isEmpty) {
+      throw CameraException('NoCamera', 'Tidak ada kamera yang ditemukan');
+    }
     final frontCamera = cameras.firstWhere(
       (camera) => camera.lensDirection == CameraLensDirection.front,
       orElse: () => cameras.first,

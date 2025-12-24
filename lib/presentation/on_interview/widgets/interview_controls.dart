@@ -22,7 +22,6 @@ class InterviewControls extends StatelessWidget {
           _ControlButton(
             onPressed: onSkip,
             icon: Icons.fast_forward_rounded,
-            label: "LEWATI",
             color: Colors.white,
             textColor: Colors.grey,
           ),
@@ -31,8 +30,7 @@ class InterviewControls extends StatelessWidget {
           Expanded(
             child: _MainActionButton(
               onPressed: canGoNext ? onNext : null,
-              label: "Selesai Menjawab",
-              subLabel: "SIAP LANJUT?",
+              label: "Siap Lanjut?",
             ),
           ),
         ],
@@ -44,14 +42,12 @@ class InterviewControls extends StatelessWidget {
 class _ControlButton extends StatelessWidget {
   final VoidCallback onPressed;
   final IconData icon;
-  final String label;
   final Color color;
   final Color textColor;
 
   const _ControlButton({
     required this.onPressed,
     required this.icon,
-    required this.label,
     required this.color,
     required this.textColor,
   });
@@ -66,22 +62,11 @@ class _ControlButton extends StatelessWidget {
         decoration: BoxDecoration(
           color: color,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Colors.grey.withOpacity(0.2)),
+          border: Border.all(color: Colors.grey.withAlpha(128)),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(icon, color: textColor, size: 24),
-            const SizedBox(height: 4),
-            Text(
-              label,
-              style: TextStyle(
-                color: textColor,
-                fontSize: 10,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
+          children: [Icon(icon, color: textColor, size: 24)],
         ),
       ),
     );
@@ -91,13 +76,8 @@ class _ControlButton extends StatelessWidget {
 class _MainActionButton extends StatelessWidget {
   final VoidCallback? onPressed;
   final String label;
-  final String subLabel;
 
-  const _MainActionButton({
-    required this.onPressed,
-    required this.label,
-    required this.subLabel,
-  });
+  const _MainActionButton({required this.onPressed, required this.label});
 
   @override
   Widget build(BuildContext context) {
@@ -108,16 +88,16 @@ class _MainActionButton extends StatelessWidget {
       borderRadius: BorderRadius.circular(24),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 300),
-        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
         decoration: BoxDecoration(
           color: isEnabled
               ? const Color(0xFF0F172A)
-              : Colors.grey.withOpacity(0.3),
+              : Colors.grey.withAlpha(128),
           borderRadius: BorderRadius.circular(24),
           boxShadow: isEnabled
               ? [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.2),
+                    color: Colors.black.withAlpha(128),
                     blurRadius: 10,
                     offset: const Offset(0, 4),
                   ),
@@ -131,15 +111,6 @@ class _MainActionButton extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(
-                  subLabel,
-                  style: TextStyle(
-                    color: isEnabled ? Colors.white70 : Colors.black38,
-                    fontSize: 10,
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: 1.2,
-                  ),
-                ),
                 Text(
                   label,
                   style: TextStyle(
@@ -159,7 +130,7 @@ class _MainActionButton extends StatelessWidget {
               child: Icon(
                 Icons.check,
                 color: isEnabled ? Colors.white : Colors.black26,
-                size: 24,
+                size: 16,
               ),
             ),
           ],

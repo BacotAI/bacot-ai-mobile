@@ -7,13 +7,13 @@ import 'package:smart_interview_ai/application/on_interview/on_interview_bloc.da
 import 'package:smart_interview_ai/core/helper/presentation_helper.dart';
 import 'package:smart_interview_ai/core/widgets/snackbar/custom_snackbar.dart';
 import 'package:smart_interview_ai/domain/pre_interview/entities/question_entity.dart';
-import '../widgets/interview_header.dart';
-import '../widgets/interview_camera_card.dart';
-import '../widgets/interview_indicators.dart';
-import '../widgets/interview_question_overlay.dart';
-import '../widgets/interview_tips_row.dart';
-import '../widgets/interview_bottom_section.dart';
-import '../widgets/interview_countdown_overlay.dart';
+import 'package:smart_interview_ai/presentation/on_interview/widgets/interview_bottom_section.dart';
+import 'package:smart_interview_ai/presentation/on_interview/widgets/interview_camera_card.dart';
+import 'package:smart_interview_ai/presentation/on_interview/widgets/interview_countdown_overlay.dart';
+import 'package:smart_interview_ai/presentation/on_interview/widgets/interview_header.dart';
+import 'package:smart_interview_ai/presentation/on_interview/widgets/interview_indicators.dart';
+import 'package:smart_interview_ai/presentation/on_interview/widgets/interview_question_overlay.dart';
+import 'package:smart_interview_ai/presentation/on_interview/widgets/interview_tips_row.dart';
 
 @RoutePage()
 class OnInterviewPage extends StatefulWidget {
@@ -82,42 +82,57 @@ class _OnInterviewPageState extends State<OnInterviewPage> {
                   ),
                   Expanded(
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 24.0,
-                        vertical: 16.0,
-                      ),
+                      padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
                       child: Stack(
                         fit: StackFit.expand,
                         children: [
                           const InterviewCameraCard(),
+
+                          if (state is OnInterviewRecording ||
+                              state is OnInterviewCountdown)
+                            Positioned(
+                              bottom: MediaQuery.of(context).size.height * 0.18,
+                              left: 20,
+                              right: 20,
+                              child: Center(child: InterviewTipsRow()),
+                            ),
+
                           if (state is OnInterviewRecording) ...[
                             const InterviewRECIndicator(),
                             const InterviewWarningIndicator(),
-                            AnimatedSwitcher(
-                              duration: const Duration(milliseconds: 500),
-                              transitionBuilder: (child, animation) {
-                                return FadeTransition(
-                                  opacity: animation,
-                                  child: SlideTransition(
-                                    position: Tween<Offset>(
-                                      begin: const Offset(0.1, 0),
-                                      end: Offset.zero,
-                                    ).animate(animation),
-                                    child: child,
-                                  ),
-                                );
-                              },
-                              child: InterviewQuestionOverlay(
-                                key: ValueKey(state.currentQuestionIndex),
-                                question: widget
-                                    .questions[state.currentQuestionIndex],
+
+                            Positioned(
+                              bottom: 20,
+                              left: 20,
+                              right: 20,
+                              child: AnimatedSwitcher(
+                                duration: const Duration(milliseconds: 500),
+                                transitionBuilder: (child, animation) {
+                                  return FadeTransition(
+                                    opacity: animation,
+                                    child: SlideTransition(
+                                      position: Tween<Offset>(
+                                        begin: const Offset(0.1, 0),
+                                        end: Offset.zero,
+                                      ).animate(animation),
+                                      child: child,
+                                    ),
+                                  );
+                                },
+                                child: InterviewQuestionOverlay(
+                                  key: ValueKey(state.currentQuestionIndex),
+                                  question: widget
+                                      .questions[state.currentQuestionIndex],
+                                ),
                               ),
                             ),
                           ],
+
                           if (state is OnInterviewCountdown)
                             InterviewCountdownOverlay(
                               count: state.validDuration,
                             ),
+
                           if (state is OnInterviewProcessing ||
                               state is OnInterviewLoading)
                             const Center(child: CircularProgressIndicator()),
@@ -125,7 +140,7 @@ class _OnInterviewPageState extends State<OnInterviewPage> {
                       ),
                     ),
                   ),
-                  const InterviewTipsRow(),
+
                   if (state is OnInterviewRecording)
                     InterviewBottomSection(state: state),
                   const SizedBox(height: 16),

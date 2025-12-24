@@ -22,17 +22,18 @@ class InterviewCameraCard extends StatelessWidget {
 
         return Container(
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(32),
+            borderRadius: BorderRadius.circular(24),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withAlpha(26),
-                blurRadius: 20,
-                offset: const Offset(0, 10),
+                color: Colors.black.withAlpha(20),
+                blurRadius: 30,
+                spreadRadius: -5,
+                offset: const Offset(0, 15),
               ),
             ],
           ),
           child: ClipRRect(
-            borderRadius: BorderRadius.circular(32),
+            borderRadius: BorderRadius.circular(24),
             child:
                 controller != null &&
                     controller.value.isInitialized &&
@@ -45,7 +46,16 @@ class InterviewCameraCard extends StatelessWidget {
                       child: CameraPreview(controller),
                     ),
                   )
-                : Container(color: Colors.black),
+                : Container(
+                    color: const Color(0xFF0F172A),
+                    child: const Center(
+                      child: Icon(
+                        Icons.videocam_off_rounded,
+                        color: Colors.white24,
+                        size: 48,
+                      ),
+                    ),
+                  ),
           ),
         );
       },
