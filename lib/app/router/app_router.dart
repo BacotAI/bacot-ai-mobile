@@ -8,8 +8,10 @@ class AppRouter extends RootStackRouter {
   AppRouter(this.authGuard);
 
   @override
+  RouteType get defaultRouteType => const RouteType.cupertino();
+
+  @override
   List<AutoRoute> get routes => [
-    // AutoRoute(page: HomeRoute.page, initial: true),
     AutoRoute(page: LoginRoute.page, initial: true),
     AutoRoute(
       path: '/navbar-home-wrapper',
@@ -25,5 +27,7 @@ class AppRouter extends RootStackRouter {
     AutoRoute(page: PreInterviewRoute.page, guards: [authGuard]),
     AutoRoute(page: IceBreakingRoute.page, guards: [authGuard]),
     AutoRoute(page: OnInterviewRoute.page, guards: [authGuard]),
+    AutoRoute(page: InterviewBriefingRoute.page, guards: [authGuard]),
+    AutoRoute(page: MissionBriefingRoute.page, guards: [authGuard]),
   ];
 }

@@ -4,7 +4,6 @@ import '../../domain/repositories/pre_interview_repository.dart';
 class PreInterviewRepositoryImpl implements PreInterviewRepository {
   @override
   Future<List<QuestionEntity>> getQuestions() async {
-    // Simulating network delay
     await Future.delayed(const Duration(milliseconds: 800));
 
     return [

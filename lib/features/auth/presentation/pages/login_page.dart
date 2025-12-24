@@ -88,6 +88,7 @@ class _LoginPageState extends State<LoginPage> {
 
   Future<void> _continueUser() async {
     setState(() => _isLoading = true);
+
     try {
       await DI.authRepository.continueWithSavedUser();
       if (!mounted) return;
@@ -210,11 +211,14 @@ class _LoginPageState extends State<LoginPage> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Image.network(PresentationConst.logoGoogle, width: 50, height: 50),
-        const SizedBox(height: 16),
+        Image.asset(
+          'assets/icon/tulkun-icon-transparent.png',
+          width: 150,
+          height: 150,
+        ),
 
         const Text(
-          "Hello there!",
+          "Hello Sobat TulKun!",
           style: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
@@ -225,7 +229,7 @@ class _LoginPageState extends State<LoginPage> {
         const SizedBox(height: 8),
 
         const Text(
-          "Welcome to the future of browsing.\nSign in to continue.",
+          "Selamat datang di aplikasi Smart Interview AI.\nMasuk untuk melanjutkan.",
           textAlign: TextAlign.center,
           style: TextStyle(color: Colors.black54),
         ),

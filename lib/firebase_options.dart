@@ -1,6 +1,5 @@
 import 'package:firebase_core/firebase_core.dart' show FirebaseOptions;
-import 'package:flutter/foundation.dart'
-    show defaultTargetPlatform, kIsWeb, TargetPlatform;
+import 'package:flutter/foundation.dart' show defaultTargetPlatform, kIsWeb, TargetPlatform;
 
 /// Default [FirebaseOptions] for use with your Firebase apps.
 ///
@@ -41,9 +40,7 @@ class DefaultFirebaseOptions {
           'please re-run the FlutterFire CLI.',
         );
       default:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions are not supported for this platform.',
-        );
+        throw UnsupportedError('DefaultFirebaseOptions are not supported for this platform.');
     }
   }
 
@@ -61,6 +58,6 @@ class DefaultFirebaseOptions {
     messagingSenderId: '1002593913652',
     projectId: 'smart-interview-ai-mobile',
     storageBucket: 'smart-interview-ai-mobile.firebasestorage.app',
-    iosBundleId: 'com.example.smartInterviewAi',
+    iosBundleId: 'id.smartInterviewAi',
   );
 }

@@ -25,11 +25,15 @@ class _AppState extends State<App> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      title: 'Smart Interview AI',
-      theme: AppTheme.light,
-      routerConfig: DI.appRouter.config(
-        navigatorObservers: () => [LogarteNavigatorObserver(logarte)],
+    return Container(
+      color: const Color(0xFFF8FAFC),
+      child: MaterialApp.router(
+        title: 'Smart Interview AI',
+        color: const Color(0xFFF8FAFC),
+        theme: AppTheme.light,
+        routerConfig: DI.appRouter.config(
+          navigatorObservers: () => [LogarteNavigatorObserver(logarte)],
+        ),
       ),
     );
   }

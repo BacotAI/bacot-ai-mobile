@@ -7,27 +7,28 @@ class AppTheme {
       useMaterial3: true,
       colorScheme: ColorScheme.fromSeed(
         seedColor: AppColors.primary,
-        brightness: Brightness.dark,
+        brightness: Brightness.light,
         primary: AppColors.primary,
         secondary: AppColors.secondary,
-        surface: AppColors.surface,
+        surface: Colors.white,
         error: AppColors.error,
         onPrimary: Colors.white,
         onSecondary: Colors.white,
-        onSurface: AppColors.textPrimary,
-        onError: Colors.black,
+        onSurface: const Color(0xFF1E293B),
+        onError: Colors.white,
       ),
-      scaffoldBackgroundColor: AppColors.background,
+      scaffoldBackgroundColor: const Color(0xFFF8FAFC),
       appBarTheme: const AppBarTheme(
-        backgroundColor: AppColors.surface,
-        foregroundColor: AppColors.textPrimary,
+        backgroundColor: Colors.white,
+        foregroundColor: Color(0xFF1E293B),
         elevation: 0,
+        centerTitle: true,
       ),
       textTheme: const TextTheme(
-        bodyLarge: TextStyle(color: AppColors.textPrimary),
-        bodyMedium: TextStyle(color: AppColors.textSecondary),
+        bodyLarge: TextStyle(color: Color(0xFF1E293B)),
+        bodyMedium: TextStyle(color: Color(0xFF64748B)),
       ),
-      iconTheme: const IconThemeData(color: AppColors.icon),
+      iconTheme: const IconThemeData(color: Color(0xFF64748B)),
     );
   }
 }
