@@ -1,20 +1,10 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:smart_interview_ai/app/router/app_router.gr.dart';
-<<<<<<< HEAD:lib/features/pre_interview/presentation/pages/mission_briefing_page.dart
-import 'package:smart_interview_ai/app/di.dart';
-import 'package:smart_interview_ai/app/router/app_router.dart';
 import 'package:smart_interview_ai/core/utils/sizes.dart';
 import 'package:smart_interview_ai/core/widgets/button/start_interview_button.dart';
-import 'package:smart_interview_ai/features/pre_interview/domain/entities/question_entity.dart';
-import '../widgets/mission_question_card.dart';
-import '../widgets/mission_help_bottom_sheet.dart';
-=======
-import 'package:smart_interview_ai/core/utils/sizes.dart';
-import 'package:smart_interview_ai/core/widgets/button/start_interview_button.dart';
+import 'package:smart_interview_ai/domain/pre_interview/entities/question_entity.dart';
 import 'package:smart_interview_ai/presentation/pre_interview/widgets/mission_help_bottom_sheet.dart';
 import 'package:smart_interview_ai/presentation/pre_interview/widgets/mission_question_card.dart';
->>>>>>> main:lib/presentation/pre_interview/pages/mission_briefing_page.dart
 
 @RoutePage()
 class MissionBriefingPage extends StatelessWidget {
@@ -165,23 +155,14 @@ class MissionBriefingPage extends StatelessWidget {
               ],
             ),
           ),
-<<<<<<< HEAD:lib/features/pre_interview/presentation/pages/mission_briefing_page.dart
-          _buildFloatingStartButton(context: context, isDisabled: false),
-=======
           _buildFloatingStartButton(context, isDisabled: true),
->>>>>>> main:lib/presentation/pre_interview/pages/mission_briefing_page.dart
         ],
       ),
     );
   }
 
-<<<<<<< HEAD:lib/features/pre_interview/presentation/pages/mission_briefing_page.dart
-  Widget _buildFloatingStartButton({
-    required BuildContext context,
-=======
   Widget _buildFloatingStartButton(
     BuildContext context, {
->>>>>>> main:lib/presentation/pre_interview/pages/mission_briefing_page.dart
     bool isDisabled = false,
   }) {
     return Positioned(
@@ -193,13 +174,7 @@ class MissionBriefingPage extends StatelessWidget {
         isDisabled: isDisabled,
         leftIcon: Icons.lock_outline,
         rightIcon: Icons.arrow_forward_rounded,
-<<<<<<< HEAD:lib/features/pre_interview/presentation/pages/mission_briefing_page.dart
-        onTap: () {
-          context.router.push(OnInterviewRoute(questions: mockQuestions));
-        },
-=======
         onTap: () {},
->>>>>>> main:lib/presentation/pre_interview/pages/mission_briefing_page.dart
       ),
     );
   }

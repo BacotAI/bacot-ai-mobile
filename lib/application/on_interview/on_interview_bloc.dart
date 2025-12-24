@@ -65,9 +65,9 @@ class OnInterviewBloc extends Bloc<OnInterviewEvent, OnInterviewState> {
 
     _elapsedSeconds = 0;
     if (!isClosed) {
-      emit(
-        OnInterviewRecording(elapsedSeconds: 0, totalDuration: _totalDuration),
-      );
+      // emit(
+      //   OnInterviewRecording(elapsedSeconds: 0, totalDuration: _totalDuration),
+      // );
     }
 
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
@@ -79,13 +79,13 @@ class OnInterviewBloc extends Bloc<OnInterviewEvent, OnInterviewState> {
             ? (state as OnInterviewRecording).lastScoringResult
             : null;
         if (!isClosed) {
-          emit(
-            OnInterviewRecording(
-              elapsedSeconds: _elapsedSeconds,
-              totalDuration: _totalDuration,
-              lastScoringResult: lastResult,
-            ),
-          );
+          // emit(
+          //   OnInterviewRecording(
+          //     elapsedSeconds: _elapsedSeconds,
+          //     totalDuration: _totalDuration,
+          //     lastScoringResult: lastResult,
+          //   ),
+          // );
         }
       }
     });
@@ -133,13 +133,13 @@ class OnInterviewBloc extends Bloc<OnInterviewEvent, OnInterviewState> {
         );
 
         if (!isClosed && state is OnInterviewRecording) {
-          emit(
-            OnInterviewRecording(
-              elapsedSeconds: _elapsedSeconds,
-              totalDuration: _totalDuration,
-              lastScoringResult: result,
-            ),
-          );
+          // emit(
+          //   OnInterviewRecording(
+          //     elapsedSeconds: _elapsedSeconds,
+          //     totalDuration: _totalDuration,
+          //     lastScoringResult: result,
+          //   ),
+          // );
         }
       }
     } catch (e) {

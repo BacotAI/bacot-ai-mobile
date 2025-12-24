@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:smart_interview_ai/features/pre_interview/domain/entities/question_entity.dart';
+import 'package:smart_interview_ai/domain/pre_interview/entities/question_entity.dart';
 
 class InterviewQuestionOverlay extends StatelessWidget {
   final QuestionEntity question;

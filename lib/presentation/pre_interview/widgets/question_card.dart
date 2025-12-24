@@ -1,10 +1,5 @@
 import 'package:flutter/material.dart';
-<<<<<<< HEAD:lib/features/pre_interview/presentation/widgets/question_card.dart
-import 'package:smart_interview_ai/features/pre_interview/domain/entities/question_entity.dart';
-=======
-import 'package:smart_interview_ai/app/router/app_router.gr.dart';
 import 'package:smart_interview_ai/domain/pre_interview/entities/question_entity.dart';
->>>>>>> main:lib/presentation/pre_interview/widgets/question_card.dart
 import 'keyword_chip.dart';
 
 class QuestionCard extends StatefulWidget {
