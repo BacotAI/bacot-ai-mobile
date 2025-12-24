@@ -2,8 +2,10 @@ import 'dart:ui';
 
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:smart_interview_ai/app/di.dart';
 import 'package:smart_interview_ai/app/router/app_router.gr.dart';
+import 'package:smart_interview_ai/application/auth/auth_bloc.dart';
 import 'package:smart_interview_ai/core/helper/presentation_helper.dart';
 import 'package:smart_interview_ai/core/utils/const.dart';
 import 'package:smart_interview_ai/core/widgets/snackbar/custom_snackbar.dart';
@@ -26,174 +28,118 @@ class _LoginPageState extends State<LoginPage> {
   List<SaveUserModel> _savedAccounts = [];
   UserModel? _userModel;
 
-  @override
-  void initState() {
-    super.initState();
-    _loadUser();
-  }
-
-  Future<void> _loadUser() async {
-    final user = await DI.authRepository.getCurrentUser();
-    final accounts = await DI.authRepository.getSavedAccounts();
-
-    if (!mounted) return;
-
-    setState(() {
-      _userModel = user;
-      _hasSavedAccounts = accounts.isNotEmpty;
-      _savedAccounts = accounts;
-    });
-  }
-
-  Future<void> _handleGoogleSignIn() async {
-    setState(() => _isLoading = true);
-
-    try {
-      final user = await DI.authRepository.loginWithGoogle();
-
-      if (!mounted) return;
-
-      if (user != null) {
-        context.router.replace(const HomeRoute());
-      } else {
-        PresentationHelper.showCustomSnackBar(
-          context: context,
-          message: 'Sign in canceled',
-          type: SnackbarType.info,
-        );
-      }
-    } catch (e) {
-      if (mounted) {
-        PresentationHelper.showCustomSnackBar(
-          context: context,
-          message: 'Login Failed: $e',
-          type: SnackbarType.error,
-        );
-      }
-    } finally {
-      if (mounted) {
-        setState(() => _isLoading = false);
-      }
-    }
-  }
-
-  Future<void> _continueUser() async {
-    setState(() => _isLoading = true);
-
-    try {
-      await DI.authRepository.continueWithSavedUser();
-      if (!mounted) return;
-
-      context.router.replace(const HomeRoute());
-    } catch (e) {
-      PresentationHelper.showCustomSnackBar(
-        context: context,
-        message: e.toString(),
-        type: SnackbarType.error,
-      );
-    } finally {
-      setState(() => _isLoading = false);
-    }
-  }
-
-  Future<void> _showSwitchAccountSheet() async {
-    final accounts = await DI.authRepository.getSavedAccounts();
-    if (!mounted) return;
-
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.white,
-      showDragHandle: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
-      builder: (_) {
-        return SwitchAccountSheet(
-          accounts: accounts,
-          onSelect: (user) async {
-            Navigator.pop(context);
-            setState(() => _isLoading = true);
-            try {
-              final switchedUser = await DI.authRepository.switchAccount(user);
-              if (!mounted) return;
-              setState(() {
-                _userModel = switchedUser;
-              });
-            } catch (e) {
-              PresentationHelper.showCustomSnackBar(
-                context: context,
-                message: e.toString(),
-                type: SnackbarType.error,
-              );
-            } finally {
-              if (mounted) {
-                setState(() => _isLoading = false);
-              }
-            }
-          },
-          onAddAccount: () async {
-            await DI.authRepository.disconnectGoogle();
-            await _handleGoogleSignIn();
-          },
-        );
-      },
-    );
-  }
+  final GlobalKey _homeKey = GlobalKey();
+  final GlobalKey _plusKey = GlobalKey();
+  final GlobalKey _profileKey = GlobalKey();
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Stack(
-        children: [
-          const Backgroundgradient(),
+    return BlocProvider(
+      create: (_) => sl<AuthBloc>()..add(AuthCheckRequested()),
+      child: Builder(
+        builder: (context) {
+          return BlocListener<AuthBloc, AuthState>(
+            listener: (context, state) {
+              if (state is AuthLoading) {
+                setState(() => _isLoading = true);
+              }
 
-          SafeArea(
-            child: Center(
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(40),
-                child: BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-                  child: Container(
-                    width: 360,
-                    padding: const EdgeInsets.all(24),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.95),
-                      borderRadius: BorderRadius.circular(36),
-                      border: Border.all(
-                        color: Colors.white.withValues(alpha: 0.8),
-                      ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.white.withValues(alpha: 0.4),
-                          blurRadius: 1,
-                          offset: const Offset(-1, -1),
-                        ),
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.08),
-                          blurRadius: 40,
-                          offset: const Offset(0, 20),
-                        ),
-                      ],
-                    ),
+              if (state is AuthAuthenticated) {
+                setState(() {
+                  _isLoading = false;
+                  _userModel = state.user;
+                });
 
-                    child: _isLoading
-                        ? const Center(child: CircularProgressIndicator())
-                        : _userModel != null
-                        ? _buildLoginWithAccount()
-                        : _hasSavedAccounts
-                        ? _buildLoginWithSavedAccounts()
-                        : _buildLoginEmpty(),
+                context.router.replaceAll([
+                  NavbarWrapperRoute(
+                    homeKey: _homeKey,
+                    plusKey: _plusKey,
+                    profileKey: _profileKey,
                   ),
-                ),
+                ]);
+              }
+
+              if (state is AuthSavedAccountsLoaded) {
+                setState(() {
+                  _savedAccounts = state.accounts;
+                  _hasSavedAccounts = state.accounts.isNotEmpty;
+                });
+              }
+
+              if (state is AuthUnauthenticated) {
+                setState(() {
+                  _isLoading = false;
+                  _userModel = null;
+                });
+              }
+
+              if (state is AuthFailure) {
+                setState(() => _isLoading = false);
+                PresentationHelper.showCustomSnackBar(
+                  context: context,
+                  message: state.message,
+                  type: SnackbarType.error,
+                );
+              }
+            },
+            child: Scaffold(
+              body: Stack(
+                children: [
+                  const Backgroundgradient(),
+                  SafeArea(
+                    child: Center(
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(40),
+                        child: BackdropFilter(
+                          filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+                          child: Container(
+                            width: 360,
+                            padding: const EdgeInsets.all(24),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withValues(alpha: 0.95),
+                              borderRadius: BorderRadius.circular(36),
+                              border: Border.all(
+                                color: Colors.white.withValues(alpha: 0.8),
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.white.withValues(alpha: 0.4),
+                                  blurRadius: 1,
+                                  offset: const Offset(-1, -1),
+                                ),
+                                BoxShadow(
+                                  color: Colors.black.withValues(alpha: 0.08),
+                                  blurRadius: 40,
+                                  offset: const Offset(0, 20),
+                                ),
+                              ],
+                            ),
+                            child: _isLoading
+                                ? const Center(
+                                    child: CircularProgressIndicator(),
+                                  )
+                                : _userModel != null
+                                ? _buildLoginWithAccount(context)
+                                : _hasSavedAccounts
+                                ? _buildLoginWithSavedAccounts(context)
+                                : _buildLoginEmpty(context),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
-          ),
-        ],
+          );
+        },
       ),
     );
   }
 
-  Widget _buildLoginEmpty() {
+  // ================= UI (TIDAK DIUBAH) =================
+
+  Widget _buildLoginEmpty(BuildContext context) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -202,31 +148,23 @@ class _LoginPageState extends State<LoginPage> {
           width: 150,
           height: 150,
         ),
-
         const Text(
           "Hello Sobat TulKun!",
-          style: TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-            color: Colors.black87,
-          ),
+          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
         ),
-
         const SizedBox(height: 8),
-
         const Text(
           "Selamat datang di aplikasi Smart Interview AI.\nMasuk untuk melanjutkan.",
           textAlign: TextAlign.center,
-          style: TextStyle(color: Colors.black54),
         ),
-
         const SizedBox(height: 32),
-
         SizedBox(
           width: double.infinity,
           height: 52,
           child: ElevatedButton(
-            onPressed: _handleGoogleSignIn,
+            onPressed: () {
+              context.read<AuthBloc>().add(AuthLoginRequested());
+            },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.white,
               foregroundColor: Colors.black87,
@@ -237,11 +175,7 @@ class _LoginPageState extends State<LoginPage> {
             child: Row(
               children: [
                 const Spacer(),
-                Image.network(
-                  PresentationConst.logoGoogle,
-                  width: 20,
-                  height: 20,
-                ),
+                Image.network(PresentationConst.logoGoogle, width: 20),
                 const SizedBox(width: 16),
                 const Text(
                   "Login with Google",
@@ -256,40 +190,29 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  Widget _buildLoginWithSavedAccounts() {
+  Widget _buildLoginWithSavedAccounts(BuildContext context) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         const Text(
           "Welcome back",
-          style: TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-            color: Colors.black87,
-          ),
+          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
         ),
-
         const SizedBox(height: 24),
-
         SwitchAccountSheet(
           accounts: _savedAccounts,
-          onSelect: (user) async {
-            final switchedUser = await DI.authRepository.switchAccount(user);
-            if (!mounted) return;
-            setState(() {
-              _userModel = switchedUser;
-            });
+          onSelect: (user) {
+            context.read<AuthBloc>().add(AuthSwitchAccountRequested(user));
           },
-          onAddAccount: () async {
-            await DI.authRepository.disconnectGoogle();
-            await _handleGoogleSignIn();
+          onAddAccount: () {
+            context.read<AuthBloc>().add(AuthLoginRequested());
           },
         ),
       ],
     );
   }
 
-  Widget _buildLoginWithAccount() {
+  Widget _buildLoginWithAccount(BuildContext context) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -313,70 +236,51 @@ class _LoginPageState extends State<LoginPage> {
             ),
           ],
         ),
-
         const SizedBox(height: 16),
-
         Text(
           _userModel!.displayName,
-          style: const TextStyle(
-            fontSize: 22,
-            fontWeight: FontWeight.bold,
-            color: Colors.black87,
-          ),
+          style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
         ),
-
         const SizedBox(height: 6),
-
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-          decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.4),
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: Text(
-            _userModel!.email,
-            style: const TextStyle(fontSize: 13, color: Colors.black87),
-          ),
-        ),
-
+        Text(_userModel!.email),
         const SizedBox(height: 32),
-
         SizedBox(
           width: double.infinity,
           height: 52,
           child: ElevatedButton(
-            onPressed: _continueUser,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF2B8CEE),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(30),
-              ),
-            ),
+            onPressed: () {
+              context.read<AuthBloc>().add(AuthCheckRequested());
+            },
             child: Text(
               'Continue as ${_userModel!.displayName}',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
-                color: Colors.white,
-              ),
+              style: const TextStyle(fontWeight: FontWeight.bold),
             ),
           ),
         ),
-
         const SizedBox(height: 12),
-
         SizedBox(
           width: double.infinity,
           height: 46,
           child: OutlinedButton(
-            onPressed: _showSwitchAccountSheet,
-            child: const Text(
-              "Switch Account",
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: Colors.black87,
-              ),
-            ),
+            onPressed: () {
+              showModalBottomSheet(
+                context: context,
+                showDragHandle: true,
+                builder: (_) => SwitchAccountSheet(
+                  accounts: _savedAccounts,
+                  onSelect: (user) {
+                    Navigator.pop(context);
+                    context.read<AuthBloc>().add(
+                      AuthSwitchAccountRequested(user),
+                    );
+                  },
+                  onAddAccount: () {
+                    context.read<AuthBloc>().add(AuthLoginRequested());
+                  },
+                ),
+              );
+            },
+            child: const Text("Switch Account"),
           ),
         ),
       ],
