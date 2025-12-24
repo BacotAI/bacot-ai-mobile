@@ -25,6 +25,9 @@ class _LoginPageState extends State<LoginPage> {
   bool _hasSavedAccounts = false;
   List<SaveUserModel> _savedAccounts = [];
   UserModel? _userModel;
+  final GlobalKey _homeKey = GlobalKey();
+  final GlobalKey _plusKey = GlobalKey();
+  final GlobalKey _profileKey = GlobalKey();
 
   @override
   void initState() {
@@ -37,9 +40,6 @@ class _LoginPageState extends State<LoginPage> {
     final accounts = await DI.authRepository.getSavedAccounts();
 
     if (!mounted) return;
-
-    print('current user: $user');
-    print('saved accounts: ${accounts.length}');
 
     setState(() {
       _userModel = user;
@@ -57,7 +57,13 @@ class _LoginPageState extends State<LoginPage> {
       if (!mounted) return;
 
       if (user != null) {
-        context.router.replace(const HomeRoute());
+        context.router.replaceAll([
+          NavbarWrapperRoute(
+            homeKey: _homeKey,
+            plusKey: _plusKey,
+            profileKey: _profileKey,
+          ),
+        ]);
       } else {
         PresentationHelper.showCustomSnackBar(
           context: context,
@@ -85,7 +91,13 @@ class _LoginPageState extends State<LoginPage> {
     try {
       await DI.authRepository.continueWithSavedUser();
       if (!mounted) return;
-      context.router.replace(const HomeRoute());
+      context.router.replaceAll([
+        NavbarWrapperRoute(
+          homeKey: _homeKey,
+          plusKey: _plusKey,
+          profileKey: _profileKey,
+        ),
+      ]);
     } catch (e) {
       PresentationHelper.showCustomSnackBar(
         context: context,

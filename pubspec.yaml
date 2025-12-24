@@ -42,6 +42,7 @@ dependencies:
   logarte: ^1.4.0
   share_plus: ^12.0.1
   flutter_svg: ^2.2.3
+  intrinsic_size_builder: ^2.0.2
 
 dev_dependencies:
   flutter_test:
