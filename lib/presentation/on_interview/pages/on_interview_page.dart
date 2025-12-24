@@ -90,14 +90,6 @@ class _OnInterviewPageState extends State<OnInterviewPage> {
             return Stack(
               fit: StackFit.expand,
               children: [
-                // Camera Preview
-                // We need to access the controller.
-                // Since we registered the service as LazySingleton, we can get it.
-                // Ideally, we should use a FutureBuilder for the controller initialization from the service
-                // BUT the Cubit handles initialization.
-
-                // Let's use a Layout that checks if controller is ready
-                // Since we don't expose controller in state, we might need to access the service.
                 _CameraView(),
 
                 // Overlay
@@ -129,8 +121,6 @@ class _OnInterviewPageState extends State<OnInterviewPage> {
   }
 }
 
-// Widget to handle camera preview independently
-// Widget to handle camera preview independently
 class _CameraView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
