@@ -8,25 +8,47 @@ class InterviewWaveform extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: List.generate(8, (index) {
-        // Create some pseudo-random variation based on audioLevel
-        final heightFactor =
-            math.sin((index + 1) * audioLevel * math.pi) * 0.5 + 0.5;
-        final barHeight = 4.0 + (heightFactor * 16.0);
+    return SizedBox(
+      height: 32,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: List.generate(12, (index) {
+          // Create some pseudo-random variation based on audioLevel
+          // Use a combination of sine waves and the audioLevel to create a dynamic effect
+          final phase = index * 0.5;
+          final heightFactor =
+              (math.sin(phase + audioLevel * math.pi * 2) * 0.3 + 0.7) *
+              audioLevel;
+          final barHeight = 4.0 + (heightFactor * 24.0);
 
-        return Container(
-          width: 4,
-          height: barHeight,
-          margin: const EdgeInsets.symmetric(horizontal: 2),
-          decoration: BoxDecoration(
-            color: const Color(0xFF00C2FF),
-            borderRadius: BorderRadius.circular(2),
-          ),
-        );
-      }),
+          return AnimatedContainer(
+            duration: const Duration(milliseconds: 100),
+            curve: Curves.easeOutCubic,
+            width: 3,
+            height: barHeight,
+            margin: const EdgeInsets.symmetric(horizontal: 1.5),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.bottomCenter,
+                end: Alignment.topCenter,
+                colors: [
+                  const Color(0xFF00C2FF).withValues(alpha: 0.7),
+                  const Color(0xFF00C2FF),
+                ],
+              ),
+              borderRadius: BorderRadius.circular(2),
+              boxShadow: [
+                BoxShadow(
+                  color: const Color(0xFF00C2FF).withValues(alpha: 0.3),
+                  blurRadius: 4,
+                  spreadRadius: 0,
+                ),
+              ],
+            ),
+          );
+        }),
+      ),
     );
   }
 }

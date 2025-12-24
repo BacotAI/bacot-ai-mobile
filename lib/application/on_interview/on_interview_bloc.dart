@@ -22,12 +22,14 @@ class OnInterviewBloc extends Bloc<OnInterviewEvent, OnInterviewState> {
   int _elapsedSeconds = 0;
   final int _totalDuration = 60;
   int _frameCounter = 0;
+  StreamSubscription<double>? _amplitudeSubscription;
 
   OnInterviewBloc(this._recorderService) : super(OnInterviewInitial()) {
     on<OnInterviewInitialized>(_onInitialized);
     on<OnInterviewStarted>(_onStarted);
     on<OnInterviewImageStreamProcessed>(_onImageStreamProcessed);
     on<OnInterviewStopped>(_onStopped);
+    on<OnInterviewAudioLevelChanged>(_onAudioLevelChanged);
   }
 
   FutureOr<void> _onInitialized(
@@ -81,6 +83,12 @@ class OnInterviewBloc extends Bloc<OnInterviewEvent, OnInterviewState> {
           lastScoringResult: const ScoringResult(),
         ),
       );
+
+      _amplitudeSubscription = _recorderService.amplitudeStream.listen((level) {
+        if (!isClosed) {
+          add(OnInterviewAudioLevelChanged(level));
+        }
+      });
     }
 
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
@@ -160,6 +168,9 @@ class OnInterviewBloc extends Bloc<OnInterviewEvent, OnInterviewState> {
     Emitter<OnInterviewState> emit,
   ) async {
     _timer?.cancel();
+    await _amplitudeSubscription?.cancel();
+    _amplitudeSubscription = null;
+
     final lastResult = state is OnInterviewRecording
         ? (state as OnInterviewRecording).lastScoringResult
         : null;
@@ -176,6 +187,15 @@ class OnInterviewBloc extends Bloc<OnInterviewEvent, OnInterviewState> {
     await Future.delayed(const Duration(seconds: 1));
     if (!isClosed) {
       emit(OnInterviewFinished(lastResult ?? const ScoringResult()));
+    }
+  }
+
+  FutureOr<void> _onAudioLevelChanged(
+    OnInterviewAudioLevelChanged event,
+    Emitter<OnInterviewState> emit,
+  ) {
+    if (state is OnInterviewRecording && !isClosed) {
+      emit((state as OnInterviewRecording).copyWith(audioLevel: event.level));
     }
   }
 

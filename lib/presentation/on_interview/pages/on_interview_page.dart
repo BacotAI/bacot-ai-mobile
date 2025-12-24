@@ -143,6 +143,7 @@ class _OnInterviewPageState extends State<OnInterviewPage> {
 
                   if (state is OnInterviewRecording)
                     InterviewBottomSection(state: state),
+
                   const SizedBox(height: 16),
                 ],
               ),

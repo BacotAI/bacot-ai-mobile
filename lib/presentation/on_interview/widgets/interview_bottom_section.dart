@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:smart_interview_ai/application/on_interview/on_interview_bloc.dart';
 import 'interview_waveform.dart';
 import 'interview_controls.dart';

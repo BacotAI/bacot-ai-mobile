@@ -28,3 +28,11 @@ class OnInterviewImageStreamProcessed extends OnInterviewEvent {
 class OnInterviewStopped extends OnInterviewEvent {
   const OnInterviewStopped();
 }
+
+class OnInterviewAudioLevelChanged extends OnInterviewEvent {
+  final double level;
+  const OnInterviewAudioLevelChanged(this.level);
+
+  @override
+  List<Object?> get props => [level];
+}
