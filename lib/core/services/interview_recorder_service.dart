@@ -3,15 +3,19 @@ import 'dart:math' as math;
 import 'package:camera/camera.dart';
 import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
 import 'package:google_mlkit_pose_detection/google_mlkit_pose_detection.dart';
-import '../../features/smart_camera/services/face_detector_service.dart';
-import '../../features/smart_camera/services/pose_detector_service.dart';
-import '../../features/smart_camera/services/object_detector_service.dart';
+import 'package:injectable/injectable.dart';
+import 'package:smart_interview_ai/infrastructure/smart_camera/services/face_detector_service.dart';
+import 'package:smart_interview_ai/infrastructure/smart_camera/services/pose_detector_service.dart';
+import 'package:smart_interview_ai/infrastructure/smart_camera/services/object_detector_service.dart';
+import 'package:smart_interview_ai/core/di/injection.dart';
 
+@lazySingleton
 class InterviewRecorderService {
   CameraController? _cameraController;
-  final FaceDetectorService _faceDetectorService = FaceDetectorService();
-  final PoseDetectorService _poseDetectorService = PoseDetectorService();
-  final ObjectDetectorService _objectDetectorService = ObjectDetectorService();
+  final FaceDetectorService _faceDetectorService = sl<FaceDetectorService>();
+  final PoseDetectorService _poseDetectorService = sl<PoseDetectorService>();
+  final ObjectDetectorService _objectDetectorService =
+      sl<ObjectDetectorService>();
 
   bool _isBusy = false;
   double _currentAudioLevel = 0.0;

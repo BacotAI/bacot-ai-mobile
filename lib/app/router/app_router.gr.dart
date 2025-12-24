@@ -12,25 +12,25 @@
 import 'package:auto_route/auto_route.dart' as _i10;
 import 'package:collection/collection.dart' as _i13;
 import 'package:flutter/material.dart' as _i11;
-import 'package:smart_interview_ai/features/audio_input/presentation/pages/audio_input_page.dart'
-    as _i1;
-import 'package:smart_interview_ai/features/auth/presentation/pages/login_page.dart'
-    as _i5;
-import 'package:smart_interview_ai/features/home/presentation/pages/home_page.dart'
-    as _i2;
-import 'package:smart_interview_ai/features/on_interview/presentation/pages/on_interview_page.dart'
-    as _i7;
-import 'package:smart_interview_ai/features/pre_interview/domain/entities/question_entity.dart'
+import 'package:smart_interview_ai/domain/pre_interview/entities/question_entity.dart'
     as _i12;
-import 'package:smart_interview_ai/features/pre_interview/presentation/pages/ice_breaking_page.dart'
+import 'package:smart_interview_ai/presentation/audio_input/pages/audio_input_page.dart'
+    as _i1;
+import 'package:smart_interview_ai/presentation/auth/pages/login_page.dart'
+    as _i5;
+import 'package:smart_interview_ai/presentation/home/pages/home_page.dart'
+    as _i2;
+import 'package:smart_interview_ai/presentation/on_interview/pages/on_interview_page.dart'
+    as _i7;
+import 'package:smart_interview_ai/presentation/pre_interview/pages/ice_breaking_page.dart'
     as _i3;
-import 'package:smart_interview_ai/features/pre_interview/presentation/pages/interview_briefing_page.dart'
+import 'package:smart_interview_ai/presentation/pre_interview/pages/interview_briefing_page.dart'
     as _i4;
-import 'package:smart_interview_ai/features/pre_interview/presentation/pages/mission_briefing_page.dart'
+import 'package:smart_interview_ai/presentation/pre_interview/pages/mission_briefing_page.dart'
     as _i6;
-import 'package:smart_interview_ai/features/pre_interview/presentation/pages/pre_interview_page.dart'
+import 'package:smart_interview_ai/presentation/pre_interview/pages/pre_interview_page.dart'
     as _i8;
-import 'package:smart_interview_ai/features/smart_camera/presentation/pages/smart_camera_page.dart'
+import 'package:smart_interview_ai/presentation/smart_camera/pages/smart_camera_page.dart'
     as _i9;
 
 /// generated route for

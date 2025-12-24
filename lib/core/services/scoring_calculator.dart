@@ -1,8 +1,8 @@
 import 'dart:ui';
 import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
 import 'package:google_mlkit_pose_detection/google_mlkit_pose_detection.dart';
-import 'package:smart_interview_ai/features/smart_camera/services/object_detector_service.dart';
-import '../../features/on_interview/domain/entities/scoring_result.dart';
+import 'package:smart_interview_ai/domain/on_interview/entities/scoring_result.dart';
+import 'package:smart_interview_ai/infrastructure/smart_camera/services/object_detector_service.dart';
 
 class ScoringCalculator {
   /// Calculates scores based on available detection data.

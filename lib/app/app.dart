@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:logarte/logarte.dart';
-import 'package:smart_interview_ai/app/di.dart';
+import 'package:smart_interview_ai/core/di/injection.dart';
+import 'package:smart_interview_ai/app/router/app_router.dart';
 import 'package:smart_interview_ai/core/config/app_theme.dart';
 
 class App extends StatefulWidget {
@@ -25,13 +26,14 @@ class _AppState extends State<App> {
 
   @override
   Widget build(BuildContext context) {
+    final router = sl<AppRouter>();
     return Container(
       color: const Color(0xFFF8FAFC),
       child: MaterialApp.router(
         title: 'Smart Interview AI',
         color: const Color(0xFFF8FAFC),
         theme: AppTheme.light,
-        routerConfig: DI.appRouter.config(
+        routerConfig: router.config(
           navigatorObservers: () => [LogarteNavigatorObserver(logarte)],
         ),
       ),
