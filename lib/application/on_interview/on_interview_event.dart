@@ -54,3 +54,29 @@ class OnInterviewTimerTicked extends OnInterviewEvent {
 class OnInterviewNextQuestionRequested extends OnInterviewEvent {
   const OnInterviewNextQuestionRequested();
 }
+
+class OnInterviewTranscriptionStarted extends OnInterviewEvent {
+  final int questionIndex;
+  const OnInterviewTranscriptionStarted(this.questionIndex);
+
+  @override
+  List<Object?> get props => [questionIndex];
+}
+
+class OnInterviewTranscriptionCompleted extends OnInterviewEvent {
+  final int questionIndex;
+  final String text;
+  const OnInterviewTranscriptionCompleted(this.questionIndex, this.text);
+
+  @override
+  List<Object?> get props => [questionIndex, text];
+}
+
+class OnInterviewTranscriptionFailed extends OnInterviewEvent {
+  final int questionIndex;
+  final String error;
+  const OnInterviewTranscriptionFailed(this.questionIndex, this.error);
+
+  @override
+  List<Object?> get props => [questionIndex, error];
+}

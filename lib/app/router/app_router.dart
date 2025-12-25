@@ -12,6 +12,7 @@ class AppRouter extends RootStackRouter {
 
   @override
   List<AutoRoute> get routes => [
+    // TODO: bypass auth
     // AutoRoute(page: LoginRoute.page, initial: true),
     // AutoRoute(
     //   path: '/navbar-home-wrapper',

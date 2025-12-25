@@ -7,12 +7,17 @@ import 'package:flutter/widgets.dart';
 import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
 import 'package:google_mlkit_pose_detection/google_mlkit_pose_detection.dart';
 import 'package:injectable/injectable.dart';
+import 'package:smart_interview_ai/domain/on_interview/entities/scoring_result.dart';
+import 'package:smart_interview_ai/domain/transcription/entities/transcription_status.dart';
+import 'package:smart_interview_ai/infrastructure/audio_input/whisper_service.dart';
 import 'package:smart_interview_ai/core/services/interview_recorder_service.dart';
 import 'package:smart_interview_ai/core/services/scoring_calculator.dart';
-import 'package:smart_interview_ai/domain/on_interview/entities/scoring_result.dart';
 import 'package:smart_interview_ai/domain/pre_interview/entities/question_entity.dart';
 import 'package:smart_interview_ai/infrastructure/smart_camera/services/object_detector_service.dart';
+import 'package:smart_interview_ai/core/helper/log_helper.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import 'package:bloc_concurrency/bloc_concurrency.dart';
 
 part 'on_interview_event.dart';
 part 'on_interview_state.dart';
@@ -20,6 +25,7 @@ part 'on_interview_state.dart';
 @injectable
 class OnInterviewBloc extends Bloc<OnInterviewEvent, OnInterviewState> {
   final InterviewRecorderService _recorderService;
+  final WhisperService _whisperService;
   Timer? _timer;
   int _elapsedSeconds = 0;
   List<QuestionEntity> _questions = [];
@@ -27,14 +33,27 @@ class OnInterviewBloc extends Bloc<OnInterviewEvent, OnInterviewState> {
   int _frameCounter = 0;
   StreamSubscription<double>? _amplitudeSubscription;
 
-  OnInterviewBloc(this._recorderService) : super(OnInterviewInitial()) {
-    on<OnInterviewInitialized>(_onInitialized);
-    on<OnInterviewStarted>(_onStarted);
-    on<OnInterviewImageStreamProcessed>(_onImageStreamProcessed);
-    on<OnInterviewStopped>(_onStopped);
+  final Map<int, TranscriptionStatus> _transcriptionStatuses = {};
+  final Map<int, String> _transcriptions = {};
+
+  OnInterviewBloc(this._recorderService, this._whisperService)
+    : super(OnInterviewInitial()) {
+    on<OnInterviewInitialized>(_onInitialized, transformer: sequential());
+    on<OnInterviewStarted>(_onStarted, transformer: sequential());
+    on<OnInterviewImageStreamProcessed>(
+      _onImageStreamProcessed,
+      transformer: droppable(),
+    );
+    on<OnInterviewStopped>(_onStopped, transformer: sequential());
     on<OnInterviewAudioLevelChanged>(_onAudioLevelChanged);
     on<OnInterviewTimerTicked>(_onTimerTicked);
-    on<OnInterviewNextQuestionRequested>(_onNextQuestionRequested);
+    on<OnInterviewNextQuestionRequested>(
+      _onNextQuestionRequested,
+      transformer: sequential(),
+    );
+    on<OnInterviewTranscriptionStarted>(_onTranscriptionStarted);
+    on<OnInterviewTranscriptionCompleted>(_onTranscriptionCompleted);
+    on<OnInterviewTranscriptionFailed>(_onTranscriptionFailed);
   }
 
   FutureOr<void> _onInitialized(
@@ -47,6 +66,7 @@ class OnInterviewBloc extends Bloc<OnInterviewEvent, OnInterviewState> {
       await _recorderService.initialize();
       if (!isClosed) add(const OnInterviewStarted());
     } catch (e) {
+      await _recorderService.dispose();
       emit(OnInterviewError("Gagal menginisialisasi kamera: $e"));
     }
   }
@@ -73,10 +93,17 @@ class OnInterviewBloc extends Bloc<OnInterviewEvent, OnInterviewState> {
 
     await countdownCompleter.future;
 
+    // Start Image Stream BEFORE Video Recording for Android compatibility
+    await _recorderService.startImageStream((inputImage, cameraImage) {
+      if (!isClosed) {
+        add(OnInterviewImageStreamProcessed(inputImage, cameraImage));
+      }
+    });
+
     try {
       await _recorderService.startVideoRecording();
     } catch (e) {
-      debugPrint("Gagal memulai rekaman video: $e");
+      Log.error("Gagal memulai rekaman video: $e");
     }
 
     _elapsedSeconds = 0;
@@ -93,6 +120,8 @@ class OnInterviewBloc extends Bloc<OnInterviewEvent, OnInterviewState> {
           totalDuration: duration,
           canGoNext: false,
           lastScoringResult: const ScoringResult(),
+          transcriptionStatuses: Map.from(_transcriptionStatuses),
+          transcriptions: Map.from(_transcriptions),
         ),
       );
 
@@ -107,12 +136,6 @@ class OnInterviewBloc extends Bloc<OnInterviewEvent, OnInterviewState> {
       _elapsedSeconds++;
       if (!isClosed) {
         add(OnInterviewTimerTicked(_elapsedSeconds));
-      }
-    });
-
-    _recorderService.startImageStream((inputImage, cameraImage) {
-      if (!isClosed) {
-        add(OnInterviewImageStreamProcessed(inputImage, cameraImage));
       }
     });
   }
@@ -181,15 +204,30 @@ class OnInterviewBloc extends Bloc<OnInterviewEvent, OnInterviewState> {
 
     emit(OnInterviewProcessing());
 
-    try {
-      await _recorderService.stopImageStream();
+    if (!isClosed) {
+      try {
+        await _recorderService.stopImageStream();
+      } catch (e) {
+        Log.error('Error stopping image stream: $e');
+      }
+
       final videoFile = await _recorderService.stopVideoRecording();
       if (videoFile != null) {
         _videoPaths.add(videoFile.path);
+
+        Log.debug('Log: Current state: $state');
+        Log.debug('Log: Video file path: ${videoFile.path}');
+
+        final index = (state is OnInterviewRecording)
+            ? (state as OnInterviewRecording).currentQuestionIndex
+            : (_questions.length - 1);
+
+        _startTranscription(index, videoFile.path);
       }
-    } catch (e) {
-      debugPrint("Error stopping recording: $e");
     }
+
+    // Dispose recorder service immediately after recording stops
+    await _recorderService.dispose();
 
     await Future.delayed(const Duration(seconds: 1));
     if (!isClosed) {
@@ -197,6 +235,8 @@ class OnInterviewBloc extends Bloc<OnInterviewEvent, OnInterviewState> {
         OnInterviewFinished(
           lastResult ?? const ScoringResult(),
           videoPaths: List.from(_videoPaths),
+          transcriptionStatuses: Map.from(_transcriptionStatuses),
+          transcriptions: Map.from(_transcriptions),
         ),
       );
     }
@@ -237,6 +277,8 @@ class OnInterviewBloc extends Bloc<OnInterviewEvent, OnInterviewState> {
             currentState.copyWith(
               remainingSeconds: math.max(0, remaining),
               canGoNext: true,
+              transcriptionStatuses: Map.from(_transcriptionStatuses),
+              transcriptions: Map.from(_transcriptions),
             ),
           );
         }
@@ -260,6 +302,8 @@ class OnInterviewBloc extends Bloc<OnInterviewEvent, OnInterviewState> {
         toIndex: toIndex,
         totalQuestions: _questions.length,
         audioLevel: currentState.audioLevel,
+        transcriptionStatuses: Map.from(_transcriptionStatuses),
+        transcriptions: Map.from(_transcriptions),
       ),
     );
 
@@ -268,19 +312,34 @@ class OnInterviewBloc extends Bloc<OnInterviewEvent, OnInterviewState> {
       final videoFile = await _recorderService.stopVideoRecording();
       if (videoFile != null) {
         _videoPaths.add(videoFile.path);
+        _startTranscription(fromIndex, videoFile.path);
       }
     } catch (e) {
-      debugPrint("Error stopping recording during transition: $e");
+      Log.error("Error stopping recording during transition: $e");
     }
+
+    // Small delay to allow camera resources to be fully released
+    await Future.delayed(const Duration(milliseconds: 500));
 
     _elapsedSeconds = 0;
     final nextQuestion = _questions[toIndex];
     final duration = nextQuestion.estimatedDurationSeconds;
 
+    // Start Image Stream BEFORE Video Recording for Android compatibility
+    try {
+      await _recorderService.startImageStream((inputImage, cameraImage) {
+        if (!isClosed) {
+          add(OnInterviewImageStreamProcessed(inputImage, cameraImage));
+        }
+      });
+    } catch (e) {
+      Log.error("Gagal memulai stream gambar baru: $e");
+    }
+
     try {
       await _recorderService.startVideoRecording();
     } catch (e) {
-      debugPrint("Gagal memulai rekaman video baru: $e");
+      Log.error("Gagal memulai rekaman video baru: $e");
     }
 
     if (!isClosed) {
@@ -293,14 +352,10 @@ class OnInterviewBloc extends Bloc<OnInterviewEvent, OnInterviewState> {
           canGoNext: false,
           lastScoringResult: currentState.lastScoringResult,
           audioLevel: currentState.audioLevel,
+          transcriptionStatuses: Map.from(_transcriptionStatuses),
+          transcriptions: Map.from(_transcriptions),
         ),
       );
-
-      _recorderService.startImageStream((inputImage, cameraImage) {
-        if (!isClosed) {
-          add(OnInterviewImageStreamProcessed(inputImage, cameraImage));
-        }
-      });
 
       // Restart timer for next question
       _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
@@ -317,5 +372,95 @@ class OnInterviewBloc extends Bloc<OnInterviewEvent, OnInterviewState> {
     _timer?.cancel();
     _recorderService.dispose();
     return super.close();
+  }
+
+  void _startTranscription(int index, String videoPath) {
+    if (isClosed) return;
+
+    Log.debug('Log: Starting transcription for question $index');
+
+    add(OnInterviewTranscriptionStarted(index));
+
+    // Run transcription in external scope/background to not block BLoC
+    unawaited(() async {
+      try {
+        final text = await _whisperService.transcribe(videoPath);
+
+        Log.debug('Log: Transcription completed for question $index: $text');
+
+        if (!isClosed) {
+          add(OnInterviewTranscriptionCompleted(index, text));
+        }
+      } catch (e) {
+        if (!isClosed) {
+          add(OnInterviewTranscriptionFailed(index, e.toString()));
+        }
+      }
+    }());
+  }
+
+  void _onTranscriptionStarted(
+    OnInterviewTranscriptionStarted event,
+    Emitter<OnInterviewState> emit,
+  ) {
+    _transcriptionStatuses[event.questionIndex] =
+        TranscriptionStatus.processing;
+    _updateTranscriptionState(emit);
+  }
+
+  void _onTranscriptionCompleted(
+    OnInterviewTranscriptionCompleted event,
+    Emitter<OnInterviewState> emit,
+  ) {
+    _transcriptionStatuses[event.questionIndex] = TranscriptionStatus.completed;
+    _transcriptions[event.questionIndex] = event.text;
+    Log.success(
+      "Question ${event.questionIndex + 1} transcribed: ${event.text}",
+    );
+    _updateTranscriptionState(emit);
+  }
+
+  void _onTranscriptionFailed(
+    OnInterviewTranscriptionFailed event,
+    Emitter<OnInterviewState> emit,
+  ) {
+    _transcriptionStatuses[event.questionIndex] = TranscriptionStatus.failed;
+    Log.error(
+      "Question ${event.questionIndex + 1} transcription failed: ${event.error}",
+    );
+    _updateTranscriptionState(emit);
+  }
+
+  void _updateTranscriptionState(Emitter<OnInterviewState> emit) {
+    if (state is OnInterviewRecording) {
+      emit(
+        (state as OnInterviewRecording).copyWith(
+          transcriptionStatuses: Map.from(_transcriptionStatuses),
+          transcriptions: Map.from(_transcriptions),
+        ),
+      );
+    } else if (state is OnInterviewStepTransition) {
+      final s = state as OnInterviewStepTransition;
+      emit(
+        OnInterviewStepTransition(
+          fromIndex: s.fromIndex,
+          toIndex: s.toIndex,
+          totalQuestions: s.totalQuestions,
+          audioLevel: s.audioLevel,
+          transcriptionStatuses: Map.from(_transcriptionStatuses),
+          transcriptions: Map.from(_transcriptions),
+        ),
+      );
+    } else if (state is OnInterviewFinished) {
+      final s = state as OnInterviewFinished;
+      emit(
+        OnInterviewFinished(
+          s.finalResult,
+          videoPaths: s.videoPaths,
+          transcriptionStatuses: Map.from(_transcriptionStatuses),
+          transcriptions: Map.from(_transcriptions),
+        ),
+      );
+    }
   }
 }

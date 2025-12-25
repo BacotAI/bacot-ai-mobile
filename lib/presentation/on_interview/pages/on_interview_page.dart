@@ -15,6 +15,8 @@ import 'package:smart_interview_ai/presentation/on_interview/widgets/interview_i
 import 'package:smart_interview_ai/presentation/on_interview/widgets/interview_question_overlay.dart';
 import 'package:smart_interview_ai/presentation/on_interview/widgets/interview_tips_row.dart';
 import 'package:smart_interview_ai/presentation/on_interview/widgets/interview_processing_view.dart';
+import 'package:smart_interview_ai/presentation/on_interview/widgets/interview_transcription_indicator.dart';
+import 'package:smart_interview_ai/presentation/on_interview/widgets/interview_finished_dialog.dart';
 
 @RoutePage()
 class OnInterviewPage extends StatefulWidget {
@@ -27,6 +29,8 @@ class OnInterviewPage extends StatefulWidget {
 }
 
 class _OnInterviewPageState extends State<OnInterviewPage> {
+  bool _dialogShown = false;
+
   @override
   void initState() {
     super.initState();
@@ -47,6 +51,21 @@ class _OnInterviewPageState extends State<OnInterviewPage> {
         context.router.back();
       }
     }
+  }
+
+  void _showFinishedDialog(BuildContext context, OnInterviewFinished state) {
+    if (_dialogShown) return;
+    _dialogShown = true;
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) => InterviewFinishedDialog(
+        initialState: state,
+        questions: widget.questions,
+        bloc: context.read<OnInterviewBloc>(),
+      ),
+    ).then((_) => _dialogShown = false);
   }
 
   @override
@@ -158,6 +177,18 @@ class _OnInterviewPageState extends State<OnInterviewPage> {
 
                           if (state is OnInterviewLoading)
                             const Center(child: CircularProgressIndicator()),
+
+                          if (state is OnInterviewRecording)
+                            InterviewTranscriptionIndicator(
+                              transcriptionStatuses:
+                                  state.transcriptionStatuses,
+                            ),
+
+                          if (state is OnInterviewStepTransition)
+                            InterviewTranscriptionIndicator(
+                              transcriptionStatuses:
+                                  state.transcriptionStatuses,
+                            ),
                         ],
                       ),
                     ),
@@ -174,25 +205,6 @@ class _OnInterviewPageState extends State<OnInterviewPage> {
             );
           },
         ),
-      ),
-    );
-  }
-
-  void _showFinishedDialog(BuildContext context, OnInterviewFinished state) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Interview Selesai'),
-        content: Text(
-          'Skor Mata: ${(state.finalResult.eyeContactScore * 100).toInt()}%\n'
-          'Feedback: ${state.finalResult.feedbackMessage}',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => context.router.popUntilRoot(),
-            child: const Text('OK'),
-          ),
-        ],
       ),
     );
   }

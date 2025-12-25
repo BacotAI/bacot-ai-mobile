@@ -37,6 +37,8 @@ import 'package:smart_interview_ai/domain/sample/repositories/sample_repository.
     as _i161;
 import 'package:smart_interview_ai/infrastructure/audio_input/repositories/audio_repository_impl.dart'
     as _i622;
+import 'package:smart_interview_ai/infrastructure/audio_input/whisper_service.dart'
+    as _i1049;
 import 'package:smart_interview_ai/infrastructure/auth/auth_repository_impl.dart'
     as _i787;
 import 'package:smart_interview_ai/infrastructure/pre_interview/repositories/pre_interview_repository_impl.dart'
@@ -68,6 +70,7 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i401.InterviewRecorderService>(
       () => _i401.InterviewRecorderService(),
     );
+    gh.lazySingleton<_i1049.WhisperService>(() => _i1049.WhisperService());
     gh.lazySingleton<_i165.FaceDetectorService>(
       () => _i165.FaceDetectorService(),
     );
@@ -76,9 +79,6 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i548.PoseDetectorService>(
       () => _i548.PoseDetectorService(),
-    );
-    gh.factory<_i452.OnInterviewBloc>(
-      () => _i452.OnInterviewBloc(gh<_i401.InterviewRecorderService>()),
     );
     gh.lazySingleton<_i280.PreInterviewRepository>(
       () => _i272.PreInterviewRepositoryImpl(),
@@ -94,6 +94,12 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i25.PreInterviewBloc>(
       () => _i25.PreInterviewBloc(gh<_i280.PreInterviewRepository>()),
+    );
+    gh.factory<_i452.OnInterviewBloc>(
+      () => _i452.OnInterviewBloc(
+        gh<_i401.InterviewRecorderService>(),
+        gh<_i1049.WhisperService>(),
+      ),
     );
     gh.factory<_i521.AuthBloc>(
       () => _i521.AuthBloc(gh<_i805.AuthRepository>()),

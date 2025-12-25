@@ -11,6 +11,7 @@ import 'package:smart_interview_ai/infrastructure/smart_camera/services/pose_det
 import 'package:smart_interview_ai/infrastructure/smart_camera/services/object_detector_service.dart';
 import 'package:audio_waveforms/audio_waveforms.dart';
 import 'package:smart_interview_ai/core/di/injection.dart';
+import 'package:smart_interview_ai/core/helper/log_helper.dart';
 
 @lazySingleton
 class InterviewRecorderService {
@@ -56,10 +57,28 @@ class InterviewRecorderService {
     _recorderController = RecorderController();
   }
 
-  void startImageStream(
+  Future<void> startImageStream(
     Function(InputImage inputImage, CameraImage cameraImage) onImage,
-  ) {
-    _cameraController?.startImageStream((image) async {
+  ) async {
+    if (_cameraController == null || !_cameraController!.value.isInitialized) {
+      return;
+    }
+
+    if (_cameraController!.value.isStreamingImages) {
+      Log.info('Camera: Already streaming images.');
+      return;
+    }
+
+    // On Android, starting image stream while recording video might fail
+    // or is explicitly forbidden by the camera plugin's Dart code.
+    // if (Platform.isAndroid && _cameraController!.value.isRecordingVideo) {
+    //   Log.error(
+    //     'Camera: Cannot start image stream while recording video on Android.',
+    //   );
+    //   return;
+    // }
+
+    await _cameraController!.startImageStream((image) async {
       if (_isBusy) return;
       _isBusy = true;
 

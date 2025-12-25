@@ -19,7 +19,7 @@ class MissionBriefingPage extends StatelessWidget {
       hrInsight:
           'Mengukur kemampuan resolusi konflik dan kecerdasan emosional.',
       difficulty: QuestionDifficulty.tricky,
-      estimatedDurationSeconds: 10,
+      estimatedDurationSeconds: 3,
       communityStats: '85% users found this helpful',
       powerWords: ['Conflict Resolution', 'Empathy', 'Communication'],
     ),
@@ -29,7 +29,7 @@ class MissionBriefingPage extends StatelessWidget {
           'Deskripsikan produk yang Anda manajemen yang gagal memenuhi harapan.',
       hrInsight: 'Mengukur kemampuan belajar dari kegagalan dan akuntabilitas.',
       difficulty: QuestionDifficulty.hard,
-      estimatedDurationSeconds: 10,
+      estimatedDurationSeconds: 3,
       communityStats: '70% users struggled here',
       powerWords: ['Accountability', 'Learning', 'Pivoting'],
     ),
@@ -163,7 +163,6 @@ class MissionBriefingPage extends StatelessWidget {
             child: StartInterviewButton(
               label: 'START',
               isDisabled: false,
-              leftIcon: Icons.lock_outline,
               rightIcon: Icons.arrow_forward_rounded,
               onTap: () {
                 context.router.push(OnInterviewRoute(questions: mockQuestions));
