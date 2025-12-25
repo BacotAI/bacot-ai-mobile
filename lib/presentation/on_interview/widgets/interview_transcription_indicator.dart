@@ -20,7 +20,7 @@ class InterviewTranscriptionIndicator extends StatelessWidget {
 
     return Positioned(
       top: 20,
-      right: 20,
+      left: 20,
       child: ClipRRect(
         borderRadius: BorderRadius.circular(12),
         child: BackdropFilter(

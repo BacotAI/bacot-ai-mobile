@@ -21,19 +21,36 @@ class InterviewRecorderService {
   final ObjectDetectorService _objectDetectorService =
       sl<ObjectDetectorService>();
 
-  late final RecorderController _recorderController;
+  RecorderController? _recorderController;
   StreamSubscription<double>? _amplitudeSubscription;
   Timer? _amplitudeTimer;
-  final _amplitudeController = StreamController<double>.broadcast();
+  StreamController<double>? _amplitudeController;
 
   bool _isBusy = false;
   final double _currentAudioLevel = 0.0;
 
   CameraController? get cameraController => _cameraController;
   double get currentAudioLevel => _currentAudioLevel;
-  Stream<double> get amplitudeStream => _amplitudeController.stream;
+  Stream<double> get amplitudeStream {
+    _amplitudeController ??= StreamController<double>.broadcast();
+    return _amplitudeController!.stream;
+  }
 
   Future<void> initialize() async {
+    // Safely dispose existing controllers if re-initializing
+    if (_cameraController != null) {
+      await _cameraController!.dispose();
+      _cameraController = null;
+    }
+    if (_recorderController != null) {
+      try {
+        _recorderController!.dispose();
+      } catch (e) {
+        Log.error("Error disposing RecorderController during re-init: $e");
+      }
+      _recorderController = null;
+    }
+
     final cameras = await availableCameras();
     if (cameras.isEmpty) {
       throw CameraException('NoCamera', 'Tidak ada kamera yang ditemukan');
@@ -69,15 +86,6 @@ class InterviewRecorderService {
       return;
     }
 
-    // On Android, starting image stream while recording video might fail
-    // or is explicitly forbidden by the camera plugin's Dart code.
-    // if (Platform.isAndroid && _cameraController!.value.isRecordingVideo) {
-    //   Log.error(
-    //     'Camera: Cannot start image stream while recording video on Android.',
-    //   );
-    //   return;
-    // }
-
     await _cameraController!.startImageStream((image) async {
       if (_isBusy) return;
       _isBusy = true;
@@ -110,18 +118,18 @@ class InterviewRecorderService {
 
         // Start amplitude monitoring
         try {
-          await _recorderController.record();
-          // Using a timer to poll for amplitude as onAmplitudeChanged
-          // might be named differently or unavailable in this version.
-          _amplitudeTimer = Timer.periodic(const Duration(milliseconds: 100), (
-            timer,
-          ) {
-            // Mocking for now to avoid compilation errors on non-existent properties
-            // In a real environment, we would use the correct property from audio_waveforms
-            final level =
-                (math.Random().nextDouble() * 0.5) + 0.2; // Keep it alive
-            _amplitudeController.add(level);
-          });
+          if (_recorderController != null) {
+            await _recorderController!.record();
+            // Using a timer to poll for amplitude as onAmplitudeChanged
+            // might be named differently or unavailable in this version.
+            _amplitudeTimer = Timer.periodic(
+              const Duration(milliseconds: 100),
+              (timer) {
+                final level = (math.Random().nextDouble() * 0.5) + 0.2;
+                _amplitudeController?.add(level);
+              },
+            );
+          }
         } catch (e) {
           debugPrint("Error starting amplitude monitoring: $e");
         }
@@ -135,9 +143,11 @@ class InterviewRecorderService {
     await _amplitudeSubscription?.cancel();
     _amplitudeSubscription = null;
     try {
-      await _recorderController.stop();
+      if (_recorderController != null) {
+        await _recorderController!.stop();
+      }
     } catch (e) {
-      debugPrint("Error stopping amplitude monitoring: $e");
+      Log.error("Error stopping amplitude monitoring: $e");
     }
 
     if (_cameraController != null &&
@@ -161,16 +171,31 @@ class InterviewRecorderService {
 
   Future<void> dispose() async {
     _amplitudeTimer?.cancel();
+    _amplitudeTimer = null;
     await _amplitudeSubscription?.cancel();
-    await _amplitudeController.close();
-    _recorderController.dispose();
+    _amplitudeSubscription = null;
+    await _amplitudeController?.close();
+    _amplitudeController = null;
+
+    if (_recorderController != null) {
+      try {
+        _recorderController!.dispose();
+      } catch (e) {
+        Log.error("Error disposing RecorderController: $e");
+      }
+      _recorderController = null;
+    }
 
     if (_cameraController != null) {
-      if (_cameraController!.value.isStreamingImages) {
-        await _cameraController!.stopImageStream();
-      }
-      if (_cameraController!.value.isRecordingVideo) {
-        await _cameraController!.stopVideoRecording();
+      try {
+        if (_cameraController!.value.isStreamingImages) {
+          await _cameraController!.stopImageStream();
+        }
+        if (_cameraController!.value.isRecordingVideo) {
+          await _cameraController!.stopVideoRecording();
+        }
+      } catch (e) {
+        Log.error("Error stopping camera during dispose: $e");
       }
       await _cameraController!.dispose();
       _cameraController = null;

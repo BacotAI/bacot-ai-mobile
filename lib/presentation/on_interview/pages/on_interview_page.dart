@@ -120,7 +120,9 @@ class _OnInterviewPageState extends State<OnInterviewPage> {
                           if (state is OnInterviewRecording ||
                               state is OnInterviewCountdown)
                             Positioned(
-                              bottom: MediaQuery.of(context).size.height * 0.18,
+                              bottom: state is OnInterviewRecording
+                                  ? MediaQuery.of(context).size.height * 0.18
+                                  : 20,
                               left: 20,
                               right: 20,
                               child: Center(child: InterviewTipsRow()),
@@ -129,8 +131,8 @@ class _OnInterviewPageState extends State<OnInterviewPage> {
                           if (state is OnInterviewRecording ||
                               state is OnInterviewStepTransition) ...[
                             const InterviewRECIndicator(),
-                            const InterviewWarningIndicator(),
 
+                            // TODO: const InterviewWarningIndicator(),
                             Positioned(
                               bottom: 20,
                               left: 20,

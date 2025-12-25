@@ -314,14 +314,15 @@ class OnInterviewBloc extends Bloc<OnInterviewEvent, OnInterviewState> {
       final videoFile = await _recorderService.stopVideoRecording();
       if (videoFile != null) {
         _videoPaths.add(videoFile.path);
+
         _startTranscription(fromIndex, videoFile.path);
       }
     } catch (e) {
       Log.error("Error stopping recording during transition: $e");
     }
 
-    // Small delay to allow camera resources to be fully released
-    await Future.delayed(const Duration(milliseconds: 500));
+    // // Small delay to allow camera resources to be fully released
+    // await Future.delayed(const Duration(milliseconds: 500));
 
     _elapsedSeconds = 0;
     final nextQuestion = _questions[toIndex];
@@ -383,7 +384,6 @@ class OnInterviewBloc extends Bloc<OnInterviewEvent, OnInterviewState> {
 
     add(OnInterviewTranscriptionStarted(index));
 
-    // Run transcription in external scope/background to not block BLoC
     unawaited(() async {
       try {
         final text = await _whisperService.transcribe(videoPath);
