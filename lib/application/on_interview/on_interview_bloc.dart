@@ -204,7 +204,11 @@ class OnInterviewBloc extends Bloc<OnInterviewEvent, OnInterviewState> {
         ? (state as OnInterviewRecording).lastScoringResult
         : null;
 
-    emit(OnInterviewProcessing());
+    emit(
+      OnInterviewProcessing(
+        transcriptionStatuses: Map.from(_transcriptionStatuses),
+      ),
+    );
 
     if (!isClosed) {
       try {
@@ -451,6 +455,12 @@ class OnInterviewBloc extends Bloc<OnInterviewEvent, OnInterviewState> {
           audioLevel: s.audioLevel,
           transcriptionStatuses: Map.from(_transcriptionStatuses),
           transcriptions: Map.from(_transcriptions),
+        ),
+      );
+    } else if (state is OnInterviewProcessing) {
+      emit(
+        OnInterviewProcessing(
+          transcriptionStatuses: Map.from(_transcriptionStatuses),
         ),
       );
     } else if (state is OnInterviewFinished) {
