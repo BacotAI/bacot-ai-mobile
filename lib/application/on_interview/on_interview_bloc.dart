@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:math' as math;
 
 import 'package:camera/camera.dart';
@@ -54,6 +55,7 @@ class OnInterviewBloc extends Bloc<OnInterviewEvent, OnInterviewState> {
     on<OnInterviewTranscriptionStarted>(_onTranscriptionStarted);
     on<OnInterviewTranscriptionCompleted>(_onTranscriptionCompleted);
     on<OnInterviewTranscriptionFailed>(_onTranscriptionFailed);
+    on<OnInterviewSessionCleared>(_onSessionCleared);
   }
 
   FutureOr<void> _onInitialized(
@@ -462,5 +464,39 @@ class OnInterviewBloc extends Bloc<OnInterviewEvent, OnInterviewState> {
         ),
       );
     }
+  }
+
+  FutureOr<void> _onSessionCleared(
+    OnInterviewSessionCleared event,
+    Emitter<OnInterviewState> emit,
+  ) async {
+    Log.info('Cleaning up interview session files...');
+    for (final videoPath in _videoPaths) {
+      try {
+        final videoFile = File(videoPath);
+        if (await videoFile.exists()) {
+          await videoFile.delete();
+          Log.debug('Deleted video: $videoPath');
+        }
+
+        // Also delete the transcription .wav file if it exists
+        final String wavPath;
+        if (videoPath.contains('.')) {
+          wavPath = '${videoPath.substring(0, videoPath.lastIndexOf('.'))}.wav';
+        } else {
+          wavPath = '$videoPath.wav';
+        }
+
+        final wavFile = File(wavPath);
+        if (await wavFile.exists()) {
+          await wavFile.delete();
+          Log.debug('Deleted transcription wav: $wavPath');
+        }
+      } catch (e) {
+        Log.error('Error deleting file: $e');
+      }
+    }
+    _videoPaths.clear();
+    Log.success('Interview session cleanup completed.');
   }
 }

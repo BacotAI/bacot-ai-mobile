@@ -80,3 +80,7 @@ class OnInterviewTranscriptionFailed extends OnInterviewEvent {
   @override
   List<Object?> get props => [questionIndex, error];
 }
+
+class OnInterviewSessionCleared extends OnInterviewEvent {
+  const OnInterviewSessionCleared();
+}

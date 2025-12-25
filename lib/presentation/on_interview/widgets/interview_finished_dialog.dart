@@ -166,6 +166,9 @@ class InterviewFinishedDialog extends StatelessWidget {
             actions: [
               ElevatedButton(
                 onPressed: () {
+                  context.read<OnInterviewBloc>().add(
+                    const OnInterviewSessionCleared(),
+                  );
                   context.router.popUntilRoot();
                 },
                 style: ElevatedButton.styleFrom(
