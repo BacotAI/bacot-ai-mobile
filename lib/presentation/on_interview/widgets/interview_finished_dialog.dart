@@ -126,27 +126,6 @@ class InterviewFinishedDialog extends StatelessWidget {
                                 transcription ?? 'Tidak ada teks.',
                                 style: const TextStyle(fontSize: 14),
                               )
-                            else if (status == TranscriptionStatus.processing ||
-                                transcription == null)
-                              const Row(
-                                children: [
-                                  SizedBox(
-                                    width: 12,
-                                    height: 12,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                    ),
-                                  ),
-                                  SizedBox(width: 8),
-                                  Text(
-                                    'Sedang memproses...',
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      color: Colors.orange,
-                                    ),
-                                  ),
-                                ],
-                              )
                             else
                               const Text(
                                 'Gagal mentranskripsi.',

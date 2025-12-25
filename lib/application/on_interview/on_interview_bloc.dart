@@ -207,6 +207,7 @@ class OnInterviewBloc extends Bloc<OnInterviewEvent, OnInterviewState> {
     emit(
       OnInterviewProcessing(
         transcriptionStatuses: Map.from(_transcriptionStatuses),
+        finalResult: lastResult,
       ),
     );
 
@@ -234,18 +235,6 @@ class OnInterviewBloc extends Bloc<OnInterviewEvent, OnInterviewState> {
 
     // Dispose recorder service immediately after recording stops
     await _recorderService.dispose();
-
-    await Future.delayed(const Duration(seconds: 1));
-    if (!isClosed) {
-      emit(
-        OnInterviewFinished(
-          lastResult ?? const ScoringResult(),
-          videoPaths: List.from(_videoPaths),
-          transcriptionStatuses: Map.from(_transcriptionStatuses),
-          transcriptions: Map.from(_transcriptions),
-        ),
-      );
-    }
   }
 
   void _onAudioLevelChanged(
@@ -458,9 +447,11 @@ class OnInterviewBloc extends Bloc<OnInterviewEvent, OnInterviewState> {
         ),
       );
     } else if (state is OnInterviewProcessing) {
+      final s = state as OnInterviewProcessing;
       emit(
         OnInterviewProcessing(
           transcriptionStatuses: Map.from(_transcriptionStatuses),
+          finalResult: s.finalResult,
         ),
       );
     } else if (state is OnInterviewFinished) {
@@ -473,6 +464,30 @@ class OnInterviewBloc extends Bloc<OnInterviewEvent, OnInterviewState> {
           transcriptions: Map.from(_transcriptions),
         ),
       );
+    }
+
+    // Check if we should transition from Processing to Finished
+    if (state is OnInterviewProcessing) {
+      final allDone = _transcriptionStatuses.values.every(
+        (status) =>
+            status == TranscriptionStatus.completed ||
+            status == TranscriptionStatus.failed,
+      );
+
+      final hasAllQuestions =
+          _transcriptionStatuses.length == _questions.length;
+
+      if (allDone && hasAllQuestions && !isClosed) {
+        final lastResult = (state as OnInterviewProcessing).finalResult;
+        emit(
+          OnInterviewFinished(
+            lastResult ?? const ScoringResult(),
+            videoPaths: List.from(_videoPaths),
+            transcriptionStatuses: Map.from(_transcriptionStatuses),
+            transcriptions: Map.from(_transcriptions),
+          ),
+        );
+      }
     }
   }
 

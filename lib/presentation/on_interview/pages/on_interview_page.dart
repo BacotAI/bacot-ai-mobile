@@ -97,6 +97,10 @@ class _OnInterviewPageState extends State<OnInterviewPage> {
             }
           },
           builder: (context, state) {
+            if (state is OnInterviewProcessing) {
+              return SafeArea(child: const InterviewProcessingView());
+            }
+
             return SafeArea(
               child: Column(
                 children: [
@@ -173,9 +177,6 @@ class _OnInterviewPageState extends State<OnInterviewPage> {
                             InterviewCountdownOverlay(
                               count: state.validDuration,
                             ),
-
-                          if (state is OnInterviewProcessing)
-                            const InterviewProcessingView(),
 
                           if (state is OnInterviewLoading)
                             const Center(child: CircularProgressIndicator()),
