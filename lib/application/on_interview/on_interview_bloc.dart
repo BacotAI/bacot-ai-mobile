@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:camera/camera.dart';
 import 'package:equatable/equatable.dart';
@@ -9,6 +10,7 @@ import 'package:injectable/injectable.dart';
 import 'package:smart_interview_ai/core/services/interview_recorder_service.dart';
 import 'package:smart_interview_ai/core/services/scoring_calculator.dart';
 import 'package:smart_interview_ai/domain/on_interview/entities/scoring_result.dart';
+import 'package:smart_interview_ai/domain/pre_interview/entities/question_entity.dart';
 import 'package:smart_interview_ai/infrastructure/smart_camera/services/object_detector_service.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -20,7 +22,8 @@ class OnInterviewBloc extends Bloc<OnInterviewEvent, OnInterviewState> {
   final InterviewRecorderService _recorderService;
   Timer? _timer;
   int _elapsedSeconds = 0;
-  final int _totalDuration = 60;
+  List<QuestionEntity> _questions = [];
+  final List<String> _videoPaths = [];
   int _frameCounter = 0;
   StreamSubscription<double>? _amplitudeSubscription;
 
@@ -30,12 +33,15 @@ class OnInterviewBloc extends Bloc<OnInterviewEvent, OnInterviewState> {
     on<OnInterviewImageStreamProcessed>(_onImageStreamProcessed);
     on<OnInterviewStopped>(_onStopped);
     on<OnInterviewAudioLevelChanged>(_onAudioLevelChanged);
+    on<OnInterviewTimerTicked>(_onTimerTicked);
+    on<OnInterviewNextQuestionRequested>(_onNextQuestionRequested);
   }
 
   FutureOr<void> _onInitialized(
     OnInterviewInitialized event,
     Emitter<OnInterviewState> emit,
   ) async {
+    _questions = event.questions;
     emit(OnInterviewLoading());
     try {
       await _recorderService.initialize();
@@ -59,7 +65,9 @@ class OnInterviewBloc extends Bloc<OnInterviewEvent, OnInterviewState> {
         timer.cancel();
         countdownCompleter.complete();
       } else {
-        if (!isClosed) emit(OnInterviewCountdown(count));
+        if (!isClosed) {
+          add(OnInterviewTimerTicked(count, isInitialCountdown: true));
+        }
       }
     });
 
@@ -72,13 +80,17 @@ class OnInterviewBloc extends Bloc<OnInterviewEvent, OnInterviewState> {
     }
 
     _elapsedSeconds = 0;
+    final duration = _questions.isNotEmpty
+        ? _questions[0].estimatedDurationSeconds
+        : 60;
+
     if (!isClosed) {
       emit(
         OnInterviewRecording(
           currentQuestionIndex: 0,
-          totalQuestions: 0, // This should be passed in or managed
-          elapsedSeconds: 0,
-          totalDuration: _totalDuration,
+          totalQuestions: _questions.length,
+          remainingSeconds: duration,
+          totalDuration: duration,
           canGoNext: false,
           lastScoringResult: const ScoringResult(),
         ),
@@ -93,16 +105,8 @@ class OnInterviewBloc extends Bloc<OnInterviewEvent, OnInterviewState> {
 
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       _elapsedSeconds++;
-      if (_elapsedSeconds >= _totalDuration) {
-        add(const OnInterviewStopped());
-      } else {
-        if (!isClosed && state is OnInterviewRecording) {
-          emit(
-            (state as OnInterviewRecording).copyWith(
-              elapsedSeconds: _elapsedSeconds,
-            ),
-          );
-        }
+      if (!isClosed) {
+        add(OnInterviewTimerTicked(_elapsedSeconds));
       }
     });
 
@@ -179,23 +183,132 @@ class OnInterviewBloc extends Bloc<OnInterviewEvent, OnInterviewState> {
 
     try {
       await _recorderService.stopImageStream();
-      await _recorderService.stopVideoRecording();
+      final videoFile = await _recorderService.stopVideoRecording();
+      if (videoFile != null) {
+        _videoPaths.add(videoFile.path);
+      }
     } catch (e) {
       debugPrint("Error stopping recording: $e");
     }
 
     await Future.delayed(const Duration(seconds: 1));
     if (!isClosed) {
-      emit(OnInterviewFinished(lastResult ?? const ScoringResult()));
+      emit(
+        OnInterviewFinished(
+          lastResult ?? const ScoringResult(),
+          videoPaths: List.from(_videoPaths),
+        ),
+      );
     }
   }
 
-  FutureOr<void> _onAudioLevelChanged(
+  void _onAudioLevelChanged(
     OnInterviewAudioLevelChanged event,
     Emitter<OnInterviewState> emit,
   ) {
     if (state is OnInterviewRecording && !isClosed) {
       emit((state as OnInterviewRecording).copyWith(audioLevel: event.level));
+    }
+  }
+
+  void _onTimerTicked(
+    OnInterviewTimerTicked event,
+    Emitter<OnInterviewState> emit,
+  ) {
+    if (isClosed) return;
+
+    if (event.isInitialCountdown) {
+      emit(OnInterviewCountdown(event.value));
+    } else {
+      if (state is OnInterviewRecording) {
+        final currentState = state as OnInterviewRecording;
+        final remaining = currentState.totalDuration - event.value;
+
+        if (remaining <= 0) {
+          _timer?.cancel();
+          final nextIndex = currentState.currentQuestionIndex + 1;
+          if (nextIndex < currentState.totalQuestions) {
+            add(const OnInterviewNextQuestionRequested());
+          } else {
+            add(const OnInterviewStopped());
+          }
+        } else {
+          emit(
+            currentState.copyWith(
+              remainingSeconds: math.max(0, remaining),
+              canGoNext: true,
+            ),
+          );
+        }
+      }
+    }
+  }
+
+  FutureOr<void> _onNextQuestionRequested(
+    OnInterviewNextQuestionRequested event,
+    Emitter<OnInterviewState> emit,
+  ) async {
+    if (state is! OnInterviewRecording) return;
+
+    final currentState = state as OnInterviewRecording;
+    final fromIndex = currentState.currentQuestionIndex;
+    final toIndex = fromIndex + 1;
+
+    emit(
+      OnInterviewStepTransition(
+        fromIndex: fromIndex,
+        toIndex: toIndex,
+        totalQuestions: _questions.length,
+        audioLevel: currentState.audioLevel,
+      ),
+    );
+
+    try {
+      await _recorderService.stopImageStream();
+      final videoFile = await _recorderService.stopVideoRecording();
+      if (videoFile != null) {
+        _videoPaths.add(videoFile.path);
+      }
+    } catch (e) {
+      debugPrint("Error stopping recording during transition: $e");
+    }
+
+    _elapsedSeconds = 0;
+    final nextQuestion = _questions[toIndex];
+    final duration = nextQuestion.estimatedDurationSeconds;
+
+    try {
+      await _recorderService.startVideoRecording();
+    } catch (e) {
+      debugPrint("Gagal memulai rekaman video baru: $e");
+    }
+
+    if (!isClosed) {
+      emit(
+        OnInterviewRecording(
+          currentQuestionIndex: toIndex,
+          totalQuestions: _questions.length,
+          remainingSeconds: duration,
+          totalDuration: duration,
+          canGoNext: false,
+          lastScoringResult: currentState.lastScoringResult,
+          audioLevel: currentState.audioLevel,
+        ),
+      );
+
+      _recorderService.startImageStream((inputImage, cameraImage) {
+        if (!isClosed) {
+          add(OnInterviewImageStreamProcessed(inputImage, cameraImage));
+        }
+      });
+
+      // Restart timer for next question
+      _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+        _elapsedSeconds++;
+        if (!isClosed) {
+          add(OnInterviewTimerTicked(_elapsedSeconds));
+        }
+      });
     }
   }
 

@@ -8,7 +8,11 @@ abstract class OnInterviewEvent extends Equatable {
 }
 
 class OnInterviewInitialized extends OnInterviewEvent {
-  const OnInterviewInitialized();
+  final List<QuestionEntity> questions;
+  const OnInterviewInitialized({required this.questions});
+
+  @override
+  List<Object?> get props => [questions];
 }
 
 class OnInterviewStarted extends OnInterviewEvent {
@@ -35,4 +39,18 @@ class OnInterviewAudioLevelChanged extends OnInterviewEvent {
 
   @override
   List<Object?> get props => [level];
+}
+
+class OnInterviewTimerTicked extends OnInterviewEvent {
+  final int value;
+  final bool isInitialCountdown;
+
+  const OnInterviewTimerTicked(this.value, {this.isInitialCountdown = false});
+
+  @override
+  List<Object?> get props => [value, isInitialCountdown];
+}
+
+class OnInterviewNextQuestionRequested extends OnInterviewEvent {
+  const OnInterviewNextQuestionRequested();
 }

@@ -18,7 +18,8 @@ class InterviewCameraCard extends StatelessWidget {
         final bool isTerminal =
             state is OnInterviewFinished ||
             state is OnInterviewError ||
-            state is OnInterviewInitial;
+            state is OnInterviewInitial ||
+            state is OnInterviewProcessing;
 
         return Container(
           decoration: BoxDecoration(

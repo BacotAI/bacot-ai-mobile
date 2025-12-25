@@ -1,15 +1,32 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:smart_interview_ai/application/on_interview/on_interview_bloc.dart';
 import 'interview_waveform.dart';
 import 'interview_controls.dart';
 
 class InterviewBottomSection extends StatelessWidget {
-  final OnInterviewRecording state;
+  final OnInterviewState state;
 
   const InterviewBottomSection({super.key, required this.state});
 
   @override
   Widget build(BuildContext context) {
+    int remainingSeconds = 0;
+    double audioLevel = 0.0;
+
+    if (state is OnInterviewRecording) {
+      final s = state as OnInterviewRecording;
+      remainingSeconds = s.remainingSeconds;
+      audioLevel = s.audioLevel;
+    } else if (state is OnInterviewStepTransition) {
+      final s = state as OnInterviewStepTransition;
+      remainingSeconds = 0;
+      audioLevel = s.audioLevel;
+    } else if (state is OnInterviewCountdown) {
+      remainingSeconds = 0;
+      audioLevel = 0.0;
+    }
+
     return Column(
       children: [
         const SizedBox(height: 16),
@@ -28,7 +45,7 @@ class InterviewBottomSection extends StatelessWidget {
                   ),
                   const SizedBox(width: 8),
                   Text(
-                    _formatDuration(state.elapsedSeconds),
+                    _formatDuration(remainingSeconds),
                     style: const TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
@@ -40,7 +57,7 @@ class InterviewBottomSection extends StatelessWidget {
               ),
 
               // Waveform
-              InterviewWaveform(audioLevel: state.audioLevel),
+              InterviewWaveform(audioLevel: audioLevel),
 
               // Mic Status
               Container(
@@ -71,9 +88,11 @@ class InterviewBottomSection extends StatelessWidget {
           ),
         ),
         InterviewControls(
-          canGoNext: state.canGoNext,
-          onSkip: () => {},
-          onNext: () => {},
+          canGoNext: true, // Allow manual stop
+          onSkip: () =>
+              context.read<OnInterviewBloc>().add(const OnInterviewStopped()),
+          onNext: () =>
+              context.read<OnInterviewBloc>().add(const OnInterviewStopped()),
         ),
       ],
     );

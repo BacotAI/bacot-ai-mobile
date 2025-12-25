@@ -14,6 +14,7 @@ import 'package:smart_interview_ai/presentation/on_interview/widgets/interview_h
 import 'package:smart_interview_ai/presentation/on_interview/widgets/interview_indicators.dart';
 import 'package:smart_interview_ai/presentation/on_interview/widgets/interview_question_overlay.dart';
 import 'package:smart_interview_ai/presentation/on_interview/widgets/interview_tips_row.dart';
+import 'package:smart_interview_ai/presentation/on_interview/widgets/interview_processing_view.dart';
 
 @RoutePage()
 class OnInterviewPage extends StatefulWidget {
@@ -52,12 +53,19 @@ class _OnInterviewPageState extends State<OnInterviewPage> {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) =>
-          sl<OnInterviewBloc>()..add(const OnInterviewInitialized()),
+          sl<OnInterviewBloc>()
+            ..add(OnInterviewInitialized(questions: widget.questions)),
       child: Scaffold(
         backgroundColor: const Color(0xFFF8FAFC),
         body: BlocConsumer<OnInterviewBloc, OnInterviewState>(
           listener: (context, state) {
             if (state is OnInterviewFinished) {
+              PresentationHelper.showCustomSnackBar(
+                context: context,
+                message:
+                    'All ${state.videoPaths.length} interview recordings have been saved successfully to your local storage.',
+                type: SnackbarType.success,
+              );
               _showFinishedDialog(context, state);
             }
 
@@ -76,7 +84,9 @@ class _OnInterviewPageState extends State<OnInterviewPage> {
                   InterviewHeader(
                     currentIndex: state is OnInterviewRecording
                         ? state.currentQuestionIndex
-                        : 0,
+                        : (state is OnInterviewStepTransition
+                              ? (state).toIndex
+                              : 0),
                     totalSteps: widget.questions.length,
                     sectionName: "Behavioral Section",
                   ),
@@ -97,7 +107,8 @@ class _OnInterviewPageState extends State<OnInterviewPage> {
                               child: Center(child: InterviewTipsRow()),
                             ),
 
-                          if (state is OnInterviewRecording) ...[
+                          if (state is OnInterviewRecording ||
+                              state is OnInterviewStepTransition) ...[
                             const InterviewRECIndicator(),
                             const InterviewWarningIndicator(),
 
@@ -120,9 +131,18 @@ class _OnInterviewPageState extends State<OnInterviewPage> {
                                   );
                                 },
                                 child: InterviewQuestionOverlay(
-                                  key: ValueKey(state.currentQuestionIndex),
-                                  question: widget
-                                      .questions[state.currentQuestionIndex],
+                                  key: ValueKey(
+                                    state is OnInterviewRecording
+                                        ? state.currentQuestionIndex
+                                        : (state as OnInterviewStepTransition)
+                                              .toIndex,
+                                  ),
+                                  question:
+                                      widget.questions[state
+                                              is OnInterviewRecording
+                                          ? state.currentQuestionIndex
+                                          : (state as OnInterviewStepTransition)
+                                                .toIndex],
                                 ),
                               ),
                             ),
@@ -133,15 +153,19 @@ class _OnInterviewPageState extends State<OnInterviewPage> {
                               count: state.validDuration,
                             ),
 
-                          if (state is OnInterviewProcessing ||
-                              state is OnInterviewLoading)
+                          if (state is OnInterviewProcessing)
+                            const InterviewProcessingView(),
+
+                          if (state is OnInterviewLoading)
                             const Center(child: CircularProgressIndicator()),
                         ],
                       ),
                     ),
                   ),
 
-                  if (state is OnInterviewRecording)
+                  if (state is OnInterviewRecording ||
+                      state is OnInterviewStepTransition ||
+                      state is OnInterviewCountdown)
                     InterviewBottomSection(state: state),
 
                   const SizedBox(height: 16),

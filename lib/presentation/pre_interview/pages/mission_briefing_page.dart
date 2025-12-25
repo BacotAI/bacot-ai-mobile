@@ -19,7 +19,7 @@ class MissionBriefingPage extends StatelessWidget {
       hrInsight:
           'Mengukur kemampuan resolusi konflik dan kecerdasan emosional.',
       difficulty: QuestionDifficulty.tricky,
-      estimatedDurationSeconds: 180,
+      estimatedDurationSeconds: 10,
       communityStats: '85% users found this helpful',
       powerWords: ['Conflict Resolution', 'Empathy', 'Communication'],
     ),
@@ -29,30 +29,30 @@ class MissionBriefingPage extends StatelessWidget {
           'Deskripsikan produk yang Anda manajemen yang gagal memenuhi harapan.',
       hrInsight: 'Mengukur kemampuan belajar dari kegagalan dan akuntabilitas.',
       difficulty: QuestionDifficulty.hard,
-      estimatedDurationSeconds: 300,
+      estimatedDurationSeconds: 10,
       communityStats: '70% users struggled here',
       powerWords: ['Accountability', 'Learning', 'Pivoting'],
     ),
-    QuestionEntity(
-      id: '3',
-      text:
-          'Bagaimana Anda menentukan fitur apa yang akan dibangun selanjutnya ketika sumber daya terbatas?',
-      hrInsight: 'Mengukur kemampuan prioritas dan pengambilan keputusan.',
-      difficulty: QuestionDifficulty.hard,
-      estimatedDurationSeconds: 240,
-      communityStats: '90% success rate with STAR method',
-      powerWords: ['Prioritization', 'ROI', 'Data-driven'],
-    ),
-    QuestionEntity(
-      id: '4',
-      text:
-          'Di mana Anda melihat industri akan bergerak selama 5 tahun mendatang?',
-      hrInsight: 'Mengukur visi strategis dan pengetahuan sektor.',
-      difficulty: QuestionDifficulty.hard,
-      estimatedDurationSeconds: 300,
-      communityStats: 'New question',
-      powerWords: ['Strategic Vision', 'Innovation', 'Market Trends'],
-    ),
+    // QuestionEntity(
+    //   id: '3',
+    //   text:
+    //       'Bagaimana Anda menentukan fitur apa yang akan dibangun selanjutnya ketika sumber daya terbatas?',
+    //   hrInsight: 'Mengukur kemampuan prioritas dan pengambilan keputusan.',
+    //   difficulty: QuestionDifficulty.hard,
+    //   estimatedDurationSeconds: 10,
+    //   communityStats: '90% success rate with STAR method',
+    //   powerWords: ['Prioritization', 'ROI', 'Data-driven'],
+    // ),
+    // QuestionEntity(
+    //   id: '4',
+    //   text:
+    //       'Di mana Anda melihat industri akan bergerak selama 5 tahun mendatang?',
+    //   hrInsight: 'Mengukur visi strategis dan pengetahuan sektor.',
+    //   difficulty: QuestionDifficulty.hard,
+    //   estimatedDurationSeconds: 10,
+    //   communityStats: 'New question',
+    //   powerWords: ['Strategic Vision', 'Innovation', 'Market Trends'],
+    // ),
   ];
 
   @override

@@ -25,7 +25,7 @@ class OnInterviewCountdown extends OnInterviewState {
 class OnInterviewRecording extends OnInterviewState {
   final int currentQuestionIndex;
   final int totalQuestions;
-  final int elapsedSeconds;
+  final int remainingSeconds;
   final int totalDuration;
   final bool canGoNext;
   final double audioLevel;
@@ -34,7 +34,7 @@ class OnInterviewRecording extends OnInterviewState {
   const OnInterviewRecording({
     required this.currentQuestionIndex,
     required this.totalQuestions,
-    required this.elapsedSeconds,
+    required this.remainingSeconds,
     required this.totalDuration,
     required this.canGoNext,
     this.audioLevel = 0.0,
@@ -44,7 +44,7 @@ class OnInterviewRecording extends OnInterviewState {
   OnInterviewRecording copyWith({
     int? currentQuestionIndex,
     int? totalQuestions,
-    int? elapsedSeconds,
+    int? remainingSeconds,
     int? totalDuration,
     bool? canGoNext,
     double? audioLevel,
@@ -53,7 +53,7 @@ class OnInterviewRecording extends OnInterviewState {
     return OnInterviewRecording(
       currentQuestionIndex: currentQuestionIndex ?? this.currentQuestionIndex,
       totalQuestions: totalQuestions ?? this.totalQuestions,
-      elapsedSeconds: elapsedSeconds ?? this.elapsedSeconds,
+      remainingSeconds: remainingSeconds ?? this.remainingSeconds,
       totalDuration: totalDuration ?? this.totalDuration,
       canGoNext: canGoNext ?? this.canGoNext,
       audioLevel: audioLevel ?? this.audioLevel,
@@ -65,7 +65,7 @@ class OnInterviewRecording extends OnInterviewState {
   List<Object?> get props => [
     currentQuestionIndex,
     totalQuestions,
-    elapsedSeconds,
+    remainingSeconds,
     totalDuration,
     canGoNext,
     audioLevel,
@@ -76,25 +76,30 @@ class OnInterviewRecording extends OnInterviewState {
 class OnInterviewStepTransition extends OnInterviewState {
   final int fromIndex;
   final int toIndex;
+  final int totalQuestions;
+  final double audioLevel;
 
   const OnInterviewStepTransition({
     required this.fromIndex,
     required this.toIndex,
+    required this.totalQuestions,
+    this.audioLevel = 0.0,
   });
 
   @override
-  List<Object?> get props => [fromIndex, toIndex];
+  List<Object?> get props => [fromIndex, toIndex, totalQuestions, audioLevel];
 }
 
 class OnInterviewProcessing extends OnInterviewState {}
 
 class OnInterviewFinished extends OnInterviewState {
   final ScoringResult finalResult;
+  final List<String> videoPaths;
 
-  const OnInterviewFinished(this.finalResult);
+  const OnInterviewFinished(this.finalResult, {this.videoPaths = const []});
 
   @override
-  List<Object?> get props => [finalResult];
+  List<Object?> get props => [finalResult, videoPaths];
 }
 
 class OnInterviewError extends OnInterviewState {
