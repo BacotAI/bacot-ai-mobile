@@ -137,6 +137,8 @@ class OnInterviewBloc extends Bloc<OnInterviewEvent, OnInterviewState> {
       });
     }
 
+    // Clear any existing timer
+    _timer?.cancel();
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       _elapsedSeconds++;
       if (!isClosed) {
@@ -294,6 +296,10 @@ class OnInterviewBloc extends Bloc<OnInterviewEvent, OnInterviewState> {
     final fromIndex = currentState.currentQuestionIndex;
     final toIndex = fromIndex + 1;
 
+    // Immediately cancel current timer to prevent double ticking
+    _timer?.cancel();
+    _timer = null;
+
     emit(
       OnInterviewStepTransition(
         fromIndex: fromIndex,
@@ -361,6 +367,7 @@ class OnInterviewBloc extends Bloc<OnInterviewEvent, OnInterviewState> {
       );
 
       // Restart timer for next question
+      _timer?.cancel();
       _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
         _elapsedSeconds++;
         if (!isClosed) {

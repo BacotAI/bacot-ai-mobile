@@ -88,11 +88,33 @@ class InterviewBottomSection extends StatelessWidget {
           ),
         ),
         InterviewControls(
-          canGoNext: true, // Allow manual stop
-          onSkip: () =>
-              context.read<OnInterviewBloc>().add(const OnInterviewStopped()),
-          onNext: () =>
-              context.read<OnInterviewBloc>().add(const OnInterviewStopped()),
+          canGoNext:
+              state is OnInterviewRecording &&
+              (state as OnInterviewRecording).canGoNext,
+          onSkip: () {
+            if (state is OnInterviewRecording) {
+              final s = state as OnInterviewRecording;
+              if (s.currentQuestionIndex < s.totalQuestions - 1) {
+                context.read<OnInterviewBloc>().add(
+                  const OnInterviewNextQuestionRequested(),
+                );
+              } else {
+                context.read<OnInterviewBloc>().add(const OnInterviewStopped());
+              }
+            }
+          },
+          onNext: () {
+            if (state is OnInterviewRecording) {
+              final s = state as OnInterviewRecording;
+              if (s.currentQuestionIndex < s.totalQuestions - 1) {
+                context.read<OnInterviewBloc>().add(
+                  const OnInterviewNextQuestionRequested(),
+                );
+              } else {
+                context.read<OnInterviewBloc>().add(const OnInterviewStopped());
+              }
+            }
+          },
         ),
       ],
     );
