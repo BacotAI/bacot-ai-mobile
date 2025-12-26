@@ -1,4 +1,3 @@
-import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
 class InterviewWaveform extends StatelessWidget {
@@ -13,18 +12,17 @@ class InterviewWaveform extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.center,
-        children: List.generate(12, (index) {
-          // Create some pseudo-random variation based on audioLevel
-          // Use a combination of sine waves and the audioLevel to create a dynamic effect
-          final phase = index * 0.5;
-          final heightFactor =
-              (math.sin(phase + audioLevel * math.pi * 2) * 0.3 + 0.7) *
-              audioLevel;
-          final barHeight = 4.0 + (heightFactor * 24.0);
+        children: List.generate(15, (index) {
+          final sensitivity = 2.0;
+
+          final wave = (audioLevel * sensitivity).clamp(0.0, 1.0);
+          final staggeredWave =
+              (wave * (0.8 + 0.4 * (index % 3 == 0 ? 1 : 0.5))).clamp(0.0, 1.0);
+          final barHeight = 4.0 + (staggeredWave * 28.0);
 
           return AnimatedContainer(
             duration: const Duration(milliseconds: 100),
-            curve: Curves.easeOutCubic,
+            curve: Curves.easeOutCirc,
             width: 3,
             height: barHeight,
             margin: const EdgeInsets.symmetric(horizontal: 1.5),
@@ -33,17 +31,18 @@ class InterviewWaveform extends StatelessWidget {
                 begin: Alignment.bottomCenter,
                 end: Alignment.topCenter,
                 colors: [
-                  const Color(0xFF00C2FF).withValues(alpha: 0.7),
+                  const Color(0xFF00C2FF).withValues(alpha: 0.6),
                   const Color(0xFF00C2FF),
                 ],
               ),
               borderRadius: BorderRadius.circular(2),
               boxShadow: [
-                BoxShadow(
-                  color: const Color(0xFF00C2FF).withValues(alpha: 0.3),
-                  blurRadius: 4,
-                  spreadRadius: 0,
-                ),
+                if (audioLevel > 0.1)
+                  BoxShadow(
+                    color: const Color(0xFF00C2FF).withValues(alpha: 0.2),
+                    blurRadius: 4,
+                    spreadRadius: 0,
+                  ),
               ],
             ),
           );

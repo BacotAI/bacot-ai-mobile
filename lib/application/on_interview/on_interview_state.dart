@@ -15,11 +15,12 @@ class OnInterviewReady extends OnInterviewState {}
 
 class OnInterviewCountdown extends OnInterviewState {
   final int validDuration;
+  final RecorderController? recorderController;
 
-  const OnInterviewCountdown(this.validDuration);
+  const OnInterviewCountdown(this.validDuration, {this.recorderController});
 
   @override
-  List<Object?> get props => [validDuration];
+  List<Object?> get props => [validDuration, recorderController];
 }
 
 class OnInterviewRecording extends OnInterviewState {
@@ -30,6 +31,7 @@ class OnInterviewRecording extends OnInterviewState {
   final bool canGoNext;
   final double audioLevel;
   final ScoringResult? lastScoringResult;
+  final RecorderController? recorderController;
 
   const OnInterviewRecording({
     required this.currentQuestionIndex,
@@ -39,6 +41,7 @@ class OnInterviewRecording extends OnInterviewState {
     required this.canGoNext,
     this.audioLevel = 0.0,
     this.lastScoringResult,
+    this.recorderController,
     this.transcriptionStatuses = const {},
     this.transcriptions = const {},
   });
@@ -54,6 +57,7 @@ class OnInterviewRecording extends OnInterviewState {
     bool? canGoNext,
     double? audioLevel,
     ScoringResult? lastScoringResult,
+    RecorderController? recorderController,
     Map<int, TranscriptionStatus>? transcriptionStatuses,
     Map<int, String>? transcriptions,
   }) {
@@ -65,6 +69,7 @@ class OnInterviewRecording extends OnInterviewState {
       canGoNext: canGoNext ?? this.canGoNext,
       audioLevel: audioLevel ?? this.audioLevel,
       lastScoringResult: lastScoringResult ?? this.lastScoringResult,
+      recorderController: recorderController ?? this.recorderController,
       transcriptionStatuses:
           transcriptionStatuses ?? this.transcriptionStatuses,
       transcriptions: transcriptions ?? this.transcriptions,
@@ -80,6 +85,7 @@ class OnInterviewRecording extends OnInterviewState {
     canGoNext,
     audioLevel,
     lastScoringResult,
+    recorderController,
     transcriptionStatuses,
     transcriptions,
   ];
@@ -90,12 +96,14 @@ class OnInterviewStepTransition extends OnInterviewState {
   final int toIndex;
   final int totalQuestions;
   final double audioLevel;
+  final RecorderController? recorderController;
 
   const OnInterviewStepTransition({
     required this.fromIndex,
     required this.toIndex,
     required this.totalQuestions,
     this.audioLevel = 0.0,
+    this.recorderController,
     this.transcriptionStatuses = const {},
     this.transcriptions = const {},
   });
@@ -109,6 +117,7 @@ class OnInterviewStepTransition extends OnInterviewState {
     toIndex,
     totalQuestions,
     audioLevel,
+    recorderController,
     transcriptionStatuses,
     transcriptions,
   ];

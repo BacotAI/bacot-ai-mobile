@@ -17,6 +17,7 @@ import 'package:smart_interview_ai/domain/pre_interview/entities/question_entity
 import 'package:smart_interview_ai/infrastructure/smart_camera/services/object_detector_service.dart';
 import 'package:smart_interview_ai/core/helper/log_helper.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:audio_waveforms/audio_waveforms.dart';
 
 import 'package:bloc_concurrency/bloc_concurrency.dart';
 
@@ -79,7 +80,12 @@ class OnInterviewBloc extends Bloc<OnInterviewEvent, OnInterviewState> {
     Emitter<OnInterviewState> emit,
   ) async {
     int count = 3;
-    emit(OnInterviewCountdown(count));
+    emit(
+      OnInterviewCountdown(
+        count,
+        recorderController: _recorderService.recorderController,
+      ),
+    );
 
     final countdownCompleter = Completer<void>();
     Timer.periodic(const Duration(seconds: 1), (timer) {
@@ -125,6 +131,7 @@ class OnInterviewBloc extends Bloc<OnInterviewEvent, OnInterviewState> {
           totalDuration: duration,
           canGoNext: false,
           lastScoringResult: const ScoringResult(),
+          recorderController: _recorderService.recorderController,
           transcriptionStatuses: Map.from(_transcriptionStatuses),
           transcriptions: Map.from(_transcriptions),
         ),
@@ -258,7 +265,12 @@ class OnInterviewBloc extends Bloc<OnInterviewEvent, OnInterviewState> {
     if (isClosed) return;
 
     if (event.isInitialCountdown) {
-      emit(OnInterviewCountdown(event.value));
+      emit(
+        OnInterviewCountdown(
+          event.value,
+          recorderController: _recorderService.recorderController,
+        ),
+      );
     } else {
       if (state is OnInterviewRecording) {
         final currentState = state as OnInterviewRecording;
@@ -306,6 +318,7 @@ class OnInterviewBloc extends Bloc<OnInterviewEvent, OnInterviewState> {
         toIndex: toIndex,
         totalQuestions: _questions.length,
         audioLevel: currentState.audioLevel,
+        recorderController: _recorderService.recorderController,
         transcriptionStatuses: Map.from(_transcriptionStatuses),
         transcriptions: Map.from(_transcriptions),
       ),
@@ -361,6 +374,7 @@ class OnInterviewBloc extends Bloc<OnInterviewEvent, OnInterviewState> {
           canGoNext: false,
           lastScoringResult: currentState.lastScoringResult,
           audioLevel: currentState.audioLevel,
+          recorderController: _recorderService.recorderController,
           transcriptionStatuses: Map.from(_transcriptionStatuses),
           transcriptions: Map.from(_transcriptions),
         ),
@@ -456,6 +470,7 @@ class OnInterviewBloc extends Bloc<OnInterviewEvent, OnInterviewState> {
           toIndex: s.toIndex,
           totalQuestions: s.totalQuestions,
           audioLevel: s.audioLevel,
+          recorderController: _recorderService.recorderController,
           transcriptionStatuses: Map.from(_transcriptionStatuses),
           transcriptions: Map.from(_transcriptions),
         ),
@@ -624,6 +639,7 @@ class OnInterviewBloc extends Bloc<OnInterviewEvent, OnInterviewState> {
             totalDuration: duration,
             canGoNext: false,
             audioLevel: previousState.audioLevel,
+            recorderController: _recorderService.recorderController,
             transcriptionStatuses: Map.from(_transcriptionStatuses),
             transcriptions: Map.from(_transcriptions),
           ),

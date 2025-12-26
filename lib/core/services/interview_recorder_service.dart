@@ -27,9 +27,11 @@ class InterviewRecorderService {
   StreamController<double>? _amplitudeController;
 
   bool _isBusy = false;
-  final double _currentAudioLevel = 0.0;
+  double _currentAudioLevel = 0.0;
+  static const double _smoothingFactor = 0.3;
 
   CameraController? get cameraController => _cameraController;
+  RecorderController? get recorderController => _recorderController;
   double get currentAudioLevel => _currentAudioLevel;
   Stream<double> get amplitudeStream {
     _amplitudeController ??= StreamController<double>.broadcast();
@@ -125,8 +127,15 @@ class InterviewRecorderService {
             _amplitudeTimer = Timer.periodic(
               const Duration(milliseconds: 100),
               (timer) {
-                final level = (math.Random().nextDouble() * 0.5) + 0.2;
-                _amplitudeController?.add(level);
+                // Generate a more realistic mock level
+                final rawLevel = (math.Random().nextDouble() * 0.3) + 0.1;
+
+                // Exponential smoothing (Low-pass filter)
+                _currentAudioLevel =
+                    (_smoothingFactor * rawLevel) +
+                    ((1 - _smoothingFactor) * _currentAudioLevel);
+
+                _amplitudeController?.add(_currentAudioLevel);
               },
             );
           }
