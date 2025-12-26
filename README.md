@@ -38,6 +38,15 @@ Command kode (seperti auto_route, json_serializable, atau dependency injection) 
 flutter pub run build_runner build
 ```
 
+# Terminal pull LFS
+
+Pastikan pull LFS sebelum melakukan pull normal.
+(Untuk pull model AI)
+
+```bash
+git lfs pull
+```
+
 # Terminal Generated SHA1/SHA256
 
 Jika pertama kali login dan terjadi error dari Google, maka aplikasi harus terlebih dahulu didaftarkan ke Firebase Console. Pastikan SHA key telah dimasukkan untuk semua package Android (PROD, DEV, dan UAT). Untuk melakukan generate SHA key, masuk ke directory android lalu jalankan perintah yang sesuai.
