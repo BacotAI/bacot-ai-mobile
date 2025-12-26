@@ -4,12 +4,14 @@ class AvatarHome extends StatelessWidget {
   final String avatar;
   final String name;
   final String email;
+  final Function() onTap;
 
   const AvatarHome({
     super.key,
     required this.avatar,
     required this.name,
     required this.email,
+    required this.onTap,
   });
 
   @override
@@ -49,6 +51,7 @@ class AvatarHome extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Expanded(
                     child: Text(
@@ -63,7 +66,15 @@ class AvatarHome extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 6),
-                  const Text('👋', style: TextStyle(fontSize: 16)),
+                  GestureDetector(
+                    onTap: onTap,
+                    behavior: HitTestBehavior.opaque,
+                    child: const Icon(
+                      Icons.logout,
+                      size: 18,
+                      color: Colors.black,
+                    ),
+                  ),
                 ],
               ),
               Text(
@@ -72,6 +83,7 @@ class AvatarHome extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
                   fontSize: 10,
+                  height: 1.1,
                   color: Colors.grey.shade600,
                   fontWeight: FontWeight.w400,
                 ),

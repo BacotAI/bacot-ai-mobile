@@ -12,27 +12,26 @@ class AppRouter extends RootStackRouter {
 
   @override
   List<AutoRoute> get routes => [
-    // TODO: bypass auth
-    // AutoRoute(page: LoginRoute.page, initial: true),
-    // AutoRoute(
-    //   path: '/navbar-home-wrapper',
-    //   page: NavbarWrapperRoute.page,
-    //   guards: [authGuard],
-    //   children: [
-    //     AutoRoute(page: HomeRoute.page, initial: true),
-    //     AutoRoute(page: AudioInputRoute.page),
-    //     AutoRoute(page: ProfileRoute.page),
-    //   ],
-    // ),
+    AutoRoute(page: LoginRoute.page, initial: true),
+    AutoRoute(
+      path: '/navbar-home-wrapper',
+      page: NavbarWrapperRoute.page,
+      guards: [authGuard],
+      children: [
+        AutoRoute(
+          path: 'home-wrapper',
+          page: HomeWrapper.page,
+          children: [AutoRoute(page: HomeRoute.page)],
+        ),
+        AutoRoute(page: AudioInputRoute.page),
+        AutoRoute(page: ProfileRoute.page),
+      ],
+    ),
     AutoRoute(page: SmartCameraRoute.page, guards: [authGuard]),
     AutoRoute(page: PreInterviewRoute.page, guards: [authGuard]),
     AutoRoute(page: IceBreakingRoute.page, guards: [authGuard]),
     AutoRoute(page: OnInterviewRoute.page, guards: [authGuard]),
     AutoRoute(page: InterviewBriefingRoute.page, guards: [authGuard]),
-    AutoRoute(
-      page: MissionBriefingRoute.page,
-      guards: [authGuard],
-      initial: true,
-    ),
+    AutoRoute(page: MissionBriefingRoute.page, guards: [authGuard]),
   ];
 }

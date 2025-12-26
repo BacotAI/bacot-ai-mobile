@@ -55,6 +55,9 @@ class _LoginPageState extends State<LoginPage> {
                     homeKey: _homeKey,
                     plusKey: _plusKey,
                     profileKey: _profileKey,
+                    children: [
+                      HomeWrapper(children: [HomeRoute()]),
+                    ],
                   ),
                 ]);
               }
@@ -91,15 +94,15 @@ class _LoginPageState extends State<LoginPage> {
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(40),
                         child: BackdropFilter(
-                          filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+                          filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
                           child: Container(
                             width: 360,
                             padding: const EdgeInsets.all(24),
                             decoration: BoxDecoration(
-                              color: Colors.white.withValues(alpha: 0.95),
-                              borderRadius: BorderRadius.circular(36),
+                              color: Colors.white.withValues(alpha: 0.18),
+                              borderRadius: BorderRadius.circular(32),
                               border: Border.all(
-                                color: Colors.white.withValues(alpha: 0.8),
+                                color: Colors.white.withValues(alpha: 0.3),
                               ),
                               boxShadow: [
                                 BoxShadow(
@@ -136,8 +139,6 @@ class _LoginPageState extends State<LoginPage> {
       ),
     );
   }
-
-  // ================= UI (TIDAK DIUBAH) =================
 
   Widget _buildLoginEmpty(BuildContext context) {
     return Column(
