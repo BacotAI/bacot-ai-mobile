@@ -18,7 +18,11 @@ class AppRouter extends RootStackRouter {
       page: NavbarWrapperRoute.page,
       guards: [authGuard],
       children: [
-        AutoRoute(page: HomeRoute.page),
+        AutoRoute(
+          path: 'home-wrapper',
+          page: HomeWrapper.page,
+          children: [AutoRoute(page: HomeRoute.page)],
+        ),
         AutoRoute(page: AudioInputRoute.page),
         AutoRoute(page: ProfileRoute.page),
       ],

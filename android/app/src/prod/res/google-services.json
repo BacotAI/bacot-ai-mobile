@@ -1,29 +1,37 @@
 {
-    "project_info": {
-        "project_number": "1002593913652",
-        "project_id": "smart-interview-ai-mobile",
-        "storage_bucket": "smart-interview-ai-mobile.firebasestorage.app"
-    },
-    "client": [
-        {
-            "client_info": {
-                "mobilesdk_app_id": "1:1002593913652:android:6aa514841aeda98d7e7361",
-                "android_client_info": {
-                    "package_name": "id.smartInterviewAi"
-                }
-            },
-            "oauth_client": [],
-            "api_key": [
-                {
-                    "current_key": "AIzaSyAufhpyol6OcpsH6F4S9P4Sr8qFsn13BLc"
-                }
-            ],
-            "services": {
-                "appinvite_service": {
-                    "other_platform_oauth_client": []
-                }
-            }
+  "project_info": {
+    "project_number": "1002593913652",
+    "project_id": "smart-interview-ai-mobile",
+    "storage_bucket": "smart-interview-ai-mobile.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1002593913652:android:3fcbc16dda5a1f1c7e7361",
+        "android_client_info": {
+          "package_name": "id.smartInterviewAi"
         }
-    ],
-    "configuration_version": "1"
+      },
+      "oauth_client": [
+        {
+          "client_id": "1002593913652-cvsf0iem9dae0t6hj233s750p3ho02kh.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "id.smartInterviewAi",
+            "certificate_hash": "b45973719d04ec28d1fb8ed7b8cd6d98f88ee584"
+          }
+        },
+        {
+          "client_id": "1002593913652-lanseu29bcj2hdmnfp8nq9ioe8v32r4u.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAufhpyol6OcpsH6F4S9P4Sr8qFsn13BLc"
+        }
+      ]
+    }
+  ],
+  "configuration_version": "1"
 }
