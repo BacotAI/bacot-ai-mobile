@@ -10,6 +10,7 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:auto_route/auto_route.dart' as _i13;
+import 'package:collection/collection.dart' as _i16;
 import 'package:flutter/material.dart' as _i14;
 import 'package:smart_interview_ai/domain/pre_interview/entities/question_entity.dart'
     as _i15;
@@ -260,11 +261,11 @@ class NavbarWrapperRouteArgs {
 class OnInterviewRoute extends _i13.PageRouteInfo<OnInterviewRouteArgs> {
   OnInterviewRoute({
     _i14.Key? key,
-    required _i15.QuestionEntity question,
+    required List<_i15.QuestionEntity> questions,
     List<_i13.PageRouteInfo>? children,
   }) : super(
          OnInterviewRoute.name,
-         args: OnInterviewRouteArgs(key: key, question: question),
+         args: OnInterviewRouteArgs(key: key, questions: questions),
          initialChildren: children,
        );
 
@@ -274,32 +275,38 @@ class OnInterviewRoute extends _i13.PageRouteInfo<OnInterviewRouteArgs> {
     name,
     builder: (data) {
       final args = data.argsAs<OnInterviewRouteArgs>();
-      return _i9.OnInterviewPage(key: args.key, question: args.question);
+      return _i9.OnInterviewPage(key: args.key, questions: args.questions);
     },
   );
 }
 
 class OnInterviewRouteArgs {
-  const OnInterviewRouteArgs({this.key, required this.question});
+  const OnInterviewRouteArgs({this.key, required this.questions});
 
   final _i14.Key? key;
 
-  final _i15.QuestionEntity question;
+  final List<_i15.QuestionEntity> questions;
 
   @override
   String toString() {
-    return 'OnInterviewRouteArgs{key: $key, question: $question}';
+    return 'OnInterviewRouteArgs{key: $key, questions: $questions}';
   }
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
     if (other is! OnInterviewRouteArgs) return false;
-    return key == other.key && question == other.question;
+    return key == other.key &&
+        const _i16.ListEquality<_i15.QuestionEntity>().equals(
+          questions,
+          other.questions,
+        );
   }
 
   @override
-  int get hashCode => key.hashCode ^ question.hashCode;
+  int get hashCode =>
+      key.hashCode ^
+      const _i16.ListEquality<_i15.QuestionEntity>().hash(questions);
 }
 
 /// generated route for

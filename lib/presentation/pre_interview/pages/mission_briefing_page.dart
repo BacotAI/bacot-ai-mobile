@@ -3,12 +3,57 @@ import 'package:flutter/material.dart';
 import 'package:smart_interview_ai/app/router/app_router.gr.dart';
 import 'package:smart_interview_ai/core/utils/sizes.dart';
 import 'package:smart_interview_ai/core/widgets/button/start_interview_button.dart';
+import 'package:smart_interview_ai/domain/pre_interview/entities/question_entity.dart';
 import 'package:smart_interview_ai/presentation/pre_interview/widgets/mission_help_bottom_sheet.dart';
 import 'package:smart_interview_ai/presentation/pre_interview/widgets/mission_question_card.dart';
 
 @RoutePage()
 class MissionBriefingPage extends StatelessWidget {
   const MissionBriefingPage({super.key});
+
+  static const List<QuestionEntity> mockQuestions = [
+    QuestionEntity(
+      id: '1',
+      text:
+          'Ceritakan pengalaman Anda saat menangani konflik dengan rekan kerja.',
+      hrInsight:
+          'Mengukur kemampuan resolusi konflik dan kecerdasan emosional.',
+      difficulty: QuestionDifficulty.tricky,
+      estimatedDurationSeconds: 10,
+      communityStats: '85% users found this helpful',
+      powerWords: ['Conflict Resolution', 'Empathy', 'Communication'],
+    ),
+    QuestionEntity(
+      id: '2',
+      text:
+          'Deskripsikan produk yang Anda manajemen yang gagal memenuhi harapan.',
+      hrInsight: 'Mengukur kemampuan belajar dari kegagalan dan akuntabilitas.',
+      difficulty: QuestionDifficulty.hard,
+      estimatedDurationSeconds: 10,
+      communityStats: '70% users struggled here',
+      powerWords: ['Accountability', 'Learning', 'Pivoting'],
+    ),
+    // QuestionEntity(
+    //   id: '3',
+    //   text:
+    //       'Bagaimana Anda menentukan fitur apa yang akan dibangun selanjutnya ketika sumber daya terbatas?',
+    //   hrInsight: 'Mengukur kemampuan prioritas dan pengambilan keputusan.',
+    //   difficulty: QuestionDifficulty.hard,
+    //   estimatedDurationSeconds: 10,
+    //   communityStats: '90% success rate with STAR method',
+    //   powerWords: ['Prioritization', 'ROI', 'Data-driven'],
+    // ),
+    // QuestionEntity(
+    //   id: '4',
+    //   text:
+    //       'Di mana Anda melihat industri akan bergerak selama 5 tahun mendatang?',
+    //   hrInsight: 'Mengukur visi strategis dan pengetahuan sektor.',
+    //   difficulty: QuestionDifficulty.hard,
+    //   estimatedDurationSeconds: 10,
+    //   communityStats: 'New question',
+    //   powerWords: ['Strategic Vision', 'Innovation', 'Market Trends'],
+    // ),
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -88,67 +133,43 @@ class MissionBriefingPage extends StatelessWidget {
                 ),
                 const SizedBox(height: SizesApp.margin * 1.5),
 
-                const MissionQuestionCard(
-                  questionNumber: '01',
-                  category: 'Perilaku',
-                  duration: '3 min',
-                  isActive: true,
-                  question:
-                      'Ceritakan pengalaman Anda saat menangani konflik dengan rekan kerja.',
-                  categoryBgColor: Color(0xFFEEF2FF),
-                  categoryColor: Color(0xFF6366F1),
-                ),
-                const MissionQuestionCard(
-                  questionNumber: '02',
-                  category: 'Strategi',
-                  duration: '5 min',
-                  categoryBgColor: Color(0xFFF5F3FF),
-                  categoryColor: Color(0xFF8B5CF6),
-                  question:
-                      'Deskripsikan produk yang Anda manajemen yang gagal memenuhi harapan.',
-                ),
-                const MissionQuestionCard(
-                  questionNumber: '03',
-                  category: 'Prioritasi',
-                  duration: '4 min',
-                  categoryBgColor: Color(0xFFF5F3FF),
-                  categoryColor: Color(0xFF8B5CF6),
-                  question:
-                      'Bagaimana Anda menentukan fitur apa yang akan dibangun selanjutnya ketika sumber daya terbatas?',
-                ),
-                const MissionQuestionCard(
-                  questionNumber: '04',
-                  category: 'Visi',
-                  duration: '5 min',
-                  categoryBgColor: Color(0xFFF5F3FF),
-                  categoryColor: Color(0xFF8B5CF6),
-                  question:
-                      'Di mana Anda melihat industri akan bergerak selama 5 tahun mendatang?',
-                ),
+                ...mockQuestions.asMap().entries.map((entry) {
+                  final index = entry.key;
+                  final q = entry.value;
+                  return MissionQuestionCard(
+                    questionNumber: (index + 1).toString().padLeft(2, '0'),
+                    category: q.difficulty == QuestionDifficulty.hard
+                        ? 'Strategi'
+                        : 'Perilaku',
+                    duration: '${q.estimatedDurationSeconds ~/ 60} min',
+                    isActive: index == 0,
+                    question: q.text,
+                    categoryBgColor: index == 0
+                        ? const Color(0xFFEEF2FF)
+                        : const Color(0xFFF5F3FF),
+                    categoryColor: index == 0
+                        ? const Color(0xFF6366F1)
+                        : const Color(0xFF8B5CF6),
+                  );
+                }),
                 const SizedBox(height: 8),
               ],
             ),
           ),
-          _buildFloatingStartButton(context, isDisabled: true),
+          Positioned(
+            bottom: SizesApp.margin * 2,
+            left: 24,
+            right: 24,
+            child: StartInterviewButton(
+              label: 'START',
+              isDisabled: false,
+              rightIcon: Icons.arrow_forward_rounded,
+              onTap: () {
+                context.router.push(OnInterviewRoute(questions: mockQuestions));
+              },
+            ),
+          ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildFloatingStartButton(
-    BuildContext context, {
-    bool isDisabled = false,
-  }) {
-    return Positioned(
-      bottom: SizesApp.margin * 2,
-      left: 24,
-      right: 24,
-      child: StartInterviewButton(
-        label: 'START',
-        isDisabled: isDisabled,
-        leftIcon: Icons.lock_outline,
-        rightIcon: Icons.arrow_forward_rounded,
-        onTap: () {},
       ),
     );
   }

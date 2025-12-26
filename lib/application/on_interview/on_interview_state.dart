@@ -11,39 +11,170 @@ class OnInterviewInitial extends OnInterviewState {}
 
 class OnInterviewLoading extends OnInterviewState {}
 
+class OnInterviewReady extends OnInterviewState {}
+
 class OnInterviewCountdown extends OnInterviewState {
   final int validDuration;
+  final RecorderController? recorderController;
 
-  const OnInterviewCountdown(this.validDuration);
+  const OnInterviewCountdown(this.validDuration, {this.recorderController});
 
   @override
-  List<Object?> get props => [validDuration];
+  List<Object?> get props => [validDuration, recorderController];
 }
 
 class OnInterviewRecording extends OnInterviewState {
-  final int elapsedSeconds;
+  final int currentQuestionIndex;
+  final int totalQuestions;
+  final int remainingSeconds;
   final int totalDuration;
+  final bool canGoNext;
+  final double audioLevel;
   final ScoringResult? lastScoringResult;
+  final RecorderController? recorderController;
 
   const OnInterviewRecording({
-    required this.elapsedSeconds,
+    required this.currentQuestionIndex,
+    required this.totalQuestions,
+    required this.remainingSeconds,
     required this.totalDuration,
+    required this.canGoNext,
+    this.audioLevel = 0.0,
     this.lastScoringResult,
+    this.recorderController,
+    this.transcriptionStatuses = const {},
+    this.transcriptions = const {},
   });
 
+  final Map<int, TranscriptionStatus> transcriptionStatuses;
+  final Map<int, String> transcriptions;
+
+  OnInterviewRecording copyWith({
+    int? currentQuestionIndex,
+    int? totalQuestions,
+    int? remainingSeconds,
+    int? totalDuration,
+    bool? canGoNext,
+    double? audioLevel,
+    ScoringResult? lastScoringResult,
+    RecorderController? recorderController,
+    Map<int, TranscriptionStatus>? transcriptionStatuses,
+    Map<int, String>? transcriptions,
+  }) {
+    return OnInterviewRecording(
+      currentQuestionIndex: currentQuestionIndex ?? this.currentQuestionIndex,
+      totalQuestions: totalQuestions ?? this.totalQuestions,
+      remainingSeconds: remainingSeconds ?? this.remainingSeconds,
+      totalDuration: totalDuration ?? this.totalDuration,
+      canGoNext: canGoNext ?? this.canGoNext,
+      audioLevel: audioLevel ?? this.audioLevel,
+      lastScoringResult: lastScoringResult ?? this.lastScoringResult,
+      recorderController: recorderController ?? this.recorderController,
+      transcriptionStatuses:
+          transcriptionStatuses ?? this.transcriptionStatuses,
+      transcriptions: transcriptions ?? this.transcriptions,
+    );
+  }
+
   @override
-  List<Object?> get props => [elapsedSeconds, totalDuration, lastScoringResult];
+  List<Object?> get props => [
+    currentQuestionIndex,
+    totalQuestions,
+    remainingSeconds,
+    totalDuration,
+    canGoNext,
+    audioLevel,
+    lastScoringResult,
+    recorderController,
+    transcriptionStatuses,
+    transcriptions,
+  ];
 }
 
-class OnInterviewProcessing extends OnInterviewState {}
+class OnInterviewStepTransition extends OnInterviewState {
+  final int fromIndex;
+  final int toIndex;
+  final int totalQuestions;
+  final double audioLevel;
+  final RecorderController? recorderController;
+
+  const OnInterviewStepTransition({
+    required this.fromIndex,
+    required this.toIndex,
+    required this.totalQuestions,
+    this.audioLevel = 0.0,
+    this.recorderController,
+    this.transcriptionStatuses = const {},
+    this.transcriptions = const {},
+  });
+
+  final Map<int, TranscriptionStatus> transcriptionStatuses;
+  final Map<int, String> transcriptions;
+
+  @override
+  List<Object?> get props => [
+    fromIndex,
+    toIndex,
+    totalQuestions,
+    audioLevel,
+    recorderController,
+    transcriptionStatuses,
+    transcriptions,
+  ];
+}
+
+class OnInterviewProcessing extends OnInterviewState {
+  final Map<int, TranscriptionStatus> transcriptionStatuses;
+  final Map<int, String> transcriptions;
+  final ScoringResult? finalResult;
+
+  const OnInterviewProcessing({
+    this.transcriptionStatuses = const {},
+    this.transcriptions = const {},
+    this.finalResult,
+  });
+
+  OnInterviewProcessing copyWith({
+    Map<int, TranscriptionStatus>? transcriptionStatuses,
+    Map<int, String>? transcriptions,
+    ScoringResult? finalResult,
+  }) {
+    return OnInterviewProcessing(
+      transcriptionStatuses:
+          transcriptionStatuses ?? this.transcriptionStatuses,
+      transcriptions: transcriptions ?? this.transcriptions,
+      finalResult: finalResult ?? this.finalResult,
+    );
+  }
+
+  @override
+  List<Object?> get props => [
+    transcriptionStatuses,
+    transcriptions,
+    finalResult,
+  ];
+}
 
 class OnInterviewFinished extends OnInterviewState {
   final ScoringResult finalResult;
+  final List<String> videoPaths;
+  final Map<int, TranscriptionStatus> transcriptionStatuses;
+  final Map<int, String> transcriptions;
 
-  const OnInterviewFinished(this.finalResult);
+  const OnInterviewFinished(
+    this.finalResult, {
+    this.videoPaths = const [],
+    this.transcriptionStatuses = const {},
+    this.transcriptions = const {},
+  });
 
   @override
-  List<Object?> get props => [finalResult];
+  List<Object?> get props => [
+    finalResult,
+    videoPaths,
+    transcriptionStatuses,
+    transcriptions,
+  ];
 }
 
 class OnInterviewError extends OnInterviewState {
@@ -53,4 +184,31 @@ class OnInterviewError extends OnInterviewState {
 
   @override
   List<Object?> get props => [message];
+}
+
+class OnInterviewCameraFailure extends OnInterviewState {
+  final String message;
+  final OnInterviewState previousState;
+  final bool isReinitializing;
+
+  const OnInterviewCameraFailure({
+    required this.message,
+    required this.previousState,
+    this.isReinitializing = false,
+  });
+
+  OnInterviewCameraFailure copyWith({
+    String? message,
+    OnInterviewState? previousState,
+    bool? isReinitializing,
+  }) {
+    return OnInterviewCameraFailure(
+      message: message ?? this.message,
+      previousState: previousState ?? this.previousState,
+      isReinitializing: isReinitializing ?? this.isReinitializing,
+    );
+  }
+
+  @override
+  List<Object?> get props => [message, previousState, isReinitializing];
 }

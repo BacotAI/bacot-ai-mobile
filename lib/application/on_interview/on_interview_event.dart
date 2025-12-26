@@ -8,7 +8,11 @@ abstract class OnInterviewEvent extends Equatable {
 }
 
 class OnInterviewInitialized extends OnInterviewEvent {
-  const OnInterviewInitialized();
+  final List<QuestionEntity> questions;
+  const OnInterviewInitialized({required this.questions});
+
+  @override
+  List<Object?> get props => [questions];
 }
 
 class OnInterviewStarted extends OnInterviewEvent {
@@ -27,4 +31,60 @@ class OnInterviewImageStreamProcessed extends OnInterviewEvent {
 
 class OnInterviewStopped extends OnInterviewEvent {
   const OnInterviewStopped();
+}
+
+class OnInterviewAudioLevelChanged extends OnInterviewEvent {
+  final double level;
+  const OnInterviewAudioLevelChanged(this.level);
+
+  @override
+  List<Object?> get props => [level];
+}
+
+class OnInterviewTimerTicked extends OnInterviewEvent {
+  final int value;
+  final bool isInitialCountdown;
+
+  const OnInterviewTimerTicked(this.value, {this.isInitialCountdown = false});
+
+  @override
+  List<Object?> get props => [value, isInitialCountdown];
+}
+
+class OnInterviewNextQuestionRequested extends OnInterviewEvent {
+  const OnInterviewNextQuestionRequested();
+}
+
+class OnInterviewTranscriptionStarted extends OnInterviewEvent {
+  final int questionIndex;
+  const OnInterviewTranscriptionStarted(this.questionIndex);
+
+  @override
+  List<Object?> get props => [questionIndex];
+}
+
+class OnInterviewTranscriptionCompleted extends OnInterviewEvent {
+  final int questionIndex;
+  final String text;
+  const OnInterviewTranscriptionCompleted(this.questionIndex, this.text);
+
+  @override
+  List<Object?> get props => [questionIndex, text];
+}
+
+class OnInterviewTranscriptionFailed extends OnInterviewEvent {
+  final int questionIndex;
+  final String error;
+  const OnInterviewTranscriptionFailed(this.questionIndex, this.error);
+
+  @override
+  List<Object?> get props => [questionIndex, error];
+}
+
+class OnInterviewSessionCleared extends OnInterviewEvent {
+  const OnInterviewSessionCleared();
+}
+
+class OnInterviewCameraReinitializeRequested extends OnInterviewEvent {
+  const OnInterviewCameraReinitializeRequested();
 }

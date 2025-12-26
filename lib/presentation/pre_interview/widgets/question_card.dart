@@ -1,6 +1,4 @@
-import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:smart_interview_ai/app/router/app_router.gr.dart';
 import 'package:smart_interview_ai/domain/pre_interview/entities/question_entity.dart';
 import 'keyword_chip.dart';
 
@@ -236,11 +234,7 @@ class _QuestionCardState extends State<QuestionCard>
                       SizedBox(
                         width: double.infinity,
                         child: OutlinedButton.icon(
-                          onPressed: () {
-                            context.router.push(
-                              IceBreakingRoute(question: widget.question),
-                            );
-                          },
+                          onPressed: () {},
                           style: OutlinedButton.styleFrom(
                             side: const BorderSide(color: Color(0xFF1E293B)),
                             foregroundColor: const Color(0xFF1E293B),
@@ -263,11 +257,7 @@ class _QuestionCardState extends State<QuestionCard>
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton.icon(
-                          onPressed: () {
-                            context.router.push(
-                              OnInterviewRoute(question: widget.question),
-                            );
-                          },
+                          onPressed: () {},
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xFF1E293B),
                             foregroundColor: Colors.white,

@@ -1,28 +1,42 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:smart_interview_ai/app/di.dart';
+import 'package:smart_interview_ai/application/on_interview/on_interview_bloc.dart';
 import 'package:smart_interview_ai/core/helper/presentation_helper.dart';
 import 'package:smart_interview_ai/core/widgets/snackbar/custom_snackbar.dart';
 import 'package:smart_interview_ai/domain/pre_interview/entities/question_entity.dart';
-import 'package:smart_interview_ai/application/on_interview/on_interview_bloc.dart';
-import '../widgets/camera_overlay.dart';
-import '../../../../core/services/interview_recorder_service.dart';
+import 'package:smart_interview_ai/presentation/on_interview/widgets/interview_bottom_section.dart';
+import 'package:smart_interview_ai/presentation/on_interview/widgets/interview_camera_card.dart';
+import 'package:smart_interview_ai/presentation/on_interview/widgets/interview_countdown_overlay.dart';
+import 'package:smart_interview_ai/presentation/on_interview/widgets/interview_header.dart';
+import 'package:smart_interview_ai/presentation/on_interview/widgets/interview_indicators.dart';
+import 'package:smart_interview_ai/presentation/on_interview/widgets/interview_question_overlay.dart';
+import 'package:smart_interview_ai/presentation/on_interview/widgets/interview_tips_row.dart';
+import 'package:smart_interview_ai/presentation/on_interview/widgets/interview_processing_view.dart';
+import 'package:smart_interview_ai/presentation/on_interview/widgets/interview_finished_dialog.dart';
+import 'package:smart_interview_ai/presentation/on_interview/widgets/camera_error_bottom_sheet.dart';
 
 @RoutePage()
 class OnInterviewPage extends StatefulWidget {
-  final QuestionEntity question;
+  final List<QuestionEntity> questions;
 
-  const OnInterviewPage({super.key, required this.question});
+  const OnInterviewPage({super.key, required this.questions});
 
   @override
   State<OnInterviewPage> createState() => _OnInterviewPageState();
 }
 
 class _OnInterviewPageState extends State<OnInterviewPage> {
-  // Manually managing permissions here for simplicity
+  bool _dialogShown = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkPermissions();
+  }
+
   Future<void> _checkPermissions() async {
     final cameraStatus = await Permission.camera.request();
     final microphoneStatus = await Permission.microphone.request();
@@ -39,45 +53,41 @@ class _OnInterviewPageState extends State<OnInterviewPage> {
     }
   }
 
-  @override
-  void initState() {
-    super.initState();
-    _checkPermissions();
+  void _showFinishedDialog(BuildContext context, OnInterviewFinished state) {
+    if (_dialogShown) return;
+    _dialogShown = true;
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) => InterviewFinishedDialog(
+        initialState: state,
+        questions: widget.questions,
+        bloc: context.read<OnInterviewBloc>(),
+      ),
+    ).then((_) => _dialogShown = false);
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) =>
-          sl<OnInterviewBloc>()..add(const OnInterviewInitialized()),
+          sl<OnInterviewBloc>()
+            ..add(OnInterviewInitialized(questions: widget.questions)),
       child: Scaffold(
-        backgroundColor: Colors.black,
+        backgroundColor: const Color(0xFFF8FAFC),
         body: BlocConsumer<OnInterviewBloc, OnInterviewState>(
           listener: (context, state) {
             if (state is OnInterviewFinished) {
-              // TODO: Navigate to results page
-              // For now, just show dialog and go back
-              showDialog(
+              PresentationHelper.showCustomSnackBar(
                 context: context,
-                builder: (context) => AlertDialog(
-                  title: const Text('Interview Selesai'),
-                  content: Text(
-                    'Skor Mata: ${(state.finalResult.eyeContactScore * 100).toInt()}%\n'
-                    'Feedback: ${state.finalResult.feedbackMessage}',
-                  ),
-                  actions: [
-                    TextButton(
-                      onPressed: () {
-                        context.router.popUntilRouteWithName(
-                          'PreInterviewRoute',
-                        );
-                      },
-                      child: const Text('OK'),
-                    ),
-                  ],
-                ),
+                message:
+                    'All ${state.videoPaths.length} interview recordings have been saved successfully to your local storage.',
+                type: SnackbarType.success,
               );
+              _showFinishedDialog(context, state);
             }
+
             if (state is OnInterviewError) {
               PresentationHelper.showCustomSnackBar(
                 context: context,
@@ -87,63 +97,126 @@ class _OnInterviewPageState extends State<OnInterviewPage> {
             }
           },
           builder: (context, state) {
-            return Stack(
-              fit: StackFit.expand,
-              children: [
-                _CameraView(),
+            final effectiveState = state is OnInterviewCameraFailure
+                ? state.previousState
+                : state;
 
-                // Overlay
-                if (state is OnInterviewCountdown)
-                  InterviewOverlay(
-                    questionText: widget.question.text,
-                    countdown: state.validDuration,
-                  )
-                else if (state is OnInterviewRecording)
-                  InterviewOverlay(
-                    questionText: widget.question.text,
-                    elapsedSeconds: state.elapsedSeconds,
-                    feedback: state.lastScoringResult,
-                    onStopPressed: () => context.read<OnInterviewBloc>().add(
-                      const OnInterviewStopped(),
+            if (effectiveState is OnInterviewProcessing) {
+              return SafeArea(child: const InterviewProcessingView());
+            }
+
+            return Stack(
+              children: [
+                SafeArea(
+                  child: Column(
+                    children: [
+                      InterviewHeader(
+                        currentIndex: effectiveState is OnInterviewRecording
+                            ? effectiveState.currentQuestionIndex
+                            : (effectiveState is OnInterviewStepTransition
+                                  ? (effectiveState).toIndex
+                                  : 0),
+                        totalSteps: widget.questions.length,
+                        sectionName: "Behavioral Section",
+                      ),
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+                          child: Stack(
+                            fit: StackFit.expand,
+                            children: [
+                              const InterviewCameraCard(),
+                              if (effectiveState is OnInterviewRecording ||
+                                  effectiveState is OnInterviewCountdown)
+                                Positioned(
+                                  bottom: effectiveState is OnInterviewRecording
+                                      ? MediaQuery.of(context).size.height *
+                                            0.18
+                                      : 20,
+                                  left: 20,
+                                  right: 20,
+                                  child: Center(child: InterviewTipsRow()),
+                                ),
+                              if (effectiveState is OnInterviewRecording ||
+                                  effectiveState
+                                      is OnInterviewStepTransition) ...[
+                                const InterviewRECIndicator(),
+
+                                // TODO: const InterviewWarningIndicator(),
+                                Positioned(
+                                  bottom: 20,
+                                  left: 20,
+                                  right: 20,
+                                  child: AnimatedSwitcher(
+                                    duration: const Duration(milliseconds: 500),
+                                    transitionBuilder: (child, animation) {
+                                      return FadeTransition(
+                                        opacity: animation,
+                                        child: SlideTransition(
+                                          position: Tween<Offset>(
+                                            begin: const Offset(0.1, 0),
+                                            end: Offset.zero,
+                                          ).animate(animation),
+                                          child: child,
+                                        ),
+                                      );
+                                    },
+                                    child: InterviewQuestionOverlay(
+                                      key: ValueKey(
+                                        effectiveState is OnInterviewRecording
+                                            ? effectiveState
+                                                  .currentQuestionIndex
+                                            : (effectiveState
+                                                      as OnInterviewStepTransition)
+                                                  .toIndex,
+                                      ),
+                                      question:
+                                          widget.questions[effectiveState
+                                                  is OnInterviewRecording
+                                              ? effectiveState
+                                                    .currentQuestionIndex
+                                              : (effectiveState
+                                                        as OnInterviewStepTransition)
+                                                    .toIndex],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                              if (effectiveState is OnInterviewCountdown)
+                                InterviewCountdownOverlay(
+                                  count: effectiveState.validDuration,
+                                ),
+                              if (effectiveState is OnInterviewLoading)
+                                const Center(
+                                  child: CircularProgressIndicator(),
+                                ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      if (effectiveState is OnInterviewRecording ||
+                          effectiveState is OnInterviewStepTransition ||
+                          effectiveState is OnInterviewCountdown)
+                        InterviewBottomSection(state: effectiveState),
+                      const SizedBox(height: 16),
+                    ],
+                  ),
+                ),
+                if (state is OnInterviewCameraFailure)
+                  Positioned(
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    child: CameraErrorBottomSheet(
+                      message: state.message,
+                      isReinitializing: state.isReinitializing,
                     ),
-                  )
-                else if (state is OnInterviewProcessing)
-                  const Center(child: CircularProgressIndicator())
-                else if (state is OnInterviewInitial ||
-                    state is OnInterviewLoading)
-                  const Center(child: CircularProgressIndicator()),
+                  ),
               ],
             );
           },
         ),
       ),
     );
-  }
-}
-
-class _CameraView extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    // Access the singleton service
-    final recorder = sl<InterviewRecorderService>();
-    final controller = recorder.cameraController;
-
-    if (controller != null && controller.value.isInitialized) {
-      return SizedBox.expand(
-        child: FittedBox(
-          fit: BoxFit.cover,
-          child: SizedBox(
-            width:
-                controller.value.previewSize?.height ??
-                MediaQuery.of(context).size.width,
-            height:
-                controller.value.previewSize?.width ??
-                MediaQuery.of(context).size.height,
-            child: CameraPreview(controller),
-          ),
-        ),
-      );
-    }
-    return const SizedBox();
   }
 }

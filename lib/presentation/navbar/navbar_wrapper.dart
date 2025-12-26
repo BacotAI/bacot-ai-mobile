@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:smart_interview_ai/app/router/app_router.gr.dart';
 import 'package:smart_interview_ai/presentation/navbar/widgets/navbar_item.dart';
 
 @RoutePage()
@@ -63,7 +64,6 @@ class _NavbarWrapperPageState extends State<NavbarWrapperPage> {
           alignment: Alignment.bottomCenter,
           clipBehavior: Clip.none,
           children: [
-            /// 🔥 GLASS CONTAINER
             Container(
               margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
               height: 64,
@@ -115,27 +115,44 @@ class _NavbarWrapperPageState extends State<NavbarWrapperPage> {
               ),
             ),
 
-            /// ➕ FLOATING PLUS BUTTON
             Positioned(
               bottom: 28,
               child: GestureDetector(
                 key: _plusKey,
-                onTap: () => tabsRouter.setActiveIndex(1),
+                onTap: () {
+                  context.router.navigate(InterviewBriefingRoute());
+                },
                 child: Container(
-                  width: 64,
-                  height: 64,
+                  width: 68,
+                  height: 68,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     color: const Color(0xFF0B132B),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.25),
-                        blurRadius: 16,
-                        offset: const Offset(0, 6),
+                        color: const Color(0xFF2196F3).withValues(alpha: 0.35),
+                        blurRadius: 15,
+                        offset: const Offset(0, 8),
+                      ),
+                      BoxShadow(
+                        color: Colors.white.withValues(alpha: 0.1),
+                        blurRadius: 2,
+                        spreadRadius: -2,
+                        offset: const Offset(0, 2),
                       ),
                     ],
+                    border: Border.all(
+                      color: Colors.white.withValues(alpha: 0.4),
+                      width: 1.5,
+                    ),
                   ),
-                  child: const Icon(Icons.add, color: Colors.white, size: 28),
+                  child: const Center(
+                    child: Icon(
+                      Icons.mic_rounded,
+                      color: Colors.white,
+                      size: 34,
+                    ),
+                  ),
                 ),
               ),
             ),
