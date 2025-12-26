@@ -68,6 +68,10 @@ class OnInterviewBloc extends Bloc<OnInterviewEvent, OnInterviewState> {
     emit(OnInterviewLoading());
     try {
       await _recorderService.initialize();
+      // Initialize transcription statuses for all questions
+      for (int i = 0; i < _questions.length; i++) {
+        _transcriptionStatuses[i] = TranscriptionStatus.idle;
+      }
       if (!isClosed) add(const OnInterviewStarted());
     } catch (e) {
       await _recorderService.dispose();
@@ -219,6 +223,7 @@ class OnInterviewBloc extends Bloc<OnInterviewEvent, OnInterviewState> {
     emit(
       OnInterviewProcessing(
         transcriptionStatuses: Map.from(_transcriptionStatuses),
+        transcriptions: Map.from(_transcriptions),
         finalResult: lastResult,
       ),
     );
@@ -235,14 +240,11 @@ class OnInterviewBloc extends Bloc<OnInterviewEvent, OnInterviewState> {
         _videoPaths.add(videoFile.path);
 
         Log.debug('Log: Current state: $state');
-        Log.debug('Log: Video file path: ${videoFile.path}');
-
-        final index = (state is OnInterviewRecording)
-            ? (state as OnInterviewRecording).currentQuestionIndex
-            : (_questions.length - 1);
-
-        _startTranscription(index, videoFile.path);
+        Log.debug('Log: Last video file path: ${videoFile.path}');
       }
+
+      // Trigger parallel transcription for all recorded videos
+      _startAllTranscriptions();
     }
 
     // Dispose recorder service immediately after recording stops
@@ -329,8 +331,6 @@ class OnInterviewBloc extends Bloc<OnInterviewEvent, OnInterviewState> {
       final videoFile = await _recorderService.stopVideoRecording();
       if (videoFile != null) {
         _videoPaths.add(videoFile.path);
-
-        _startTranscription(fromIndex, videoFile.path);
       }
     } catch (e) {
       Log.error("Error stopping recording during transition: $e");
@@ -396,6 +396,18 @@ class OnInterviewBloc extends Bloc<OnInterviewEvent, OnInterviewState> {
     _timer?.cancel();
     _recorderService.dispose();
     return super.close();
+  }
+
+  void _startAllTranscriptions() {
+    if (isClosed) return;
+
+    Log.info(
+      'Starting parallel transcription for ${_videoPaths.length} videos',
+    );
+
+    for (int i = 0; i < _videoPaths.length; i++) {
+      _startTranscription(i, _videoPaths[i]);
+    }
   }
 
   void _startTranscription(int index, String videoPath) {
@@ -478,9 +490,9 @@ class OnInterviewBloc extends Bloc<OnInterviewEvent, OnInterviewState> {
     } else if (state is OnInterviewProcessing) {
       final s = state as OnInterviewProcessing;
       emit(
-        OnInterviewProcessing(
+        s.copyWith(
           transcriptionStatuses: Map.from(_transcriptionStatuses),
-          finalResult: s.finalResult,
+          transcriptions: Map.from(_transcriptions),
         ),
       );
     } else if (state is OnInterviewFinished) {

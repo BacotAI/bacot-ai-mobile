@@ -18,10 +18,10 @@ class InterviewProcessingView extends StatelessWidget {
                   : <int, TranscriptionStatus>{});
 
         // Calculate progress percentage
+        int totalCount = transcriptionStatuses.length;
         int completedCount = transcriptionStatuses.values
             .where((s) => s == TranscriptionStatus.completed)
             .length;
-        int totalCount = transcriptionStatuses.length;
         int progressPercent = totalCount > 0
             ? (completedCount * 100 ~/ totalCount)
             : 0;
@@ -109,7 +109,9 @@ class InterviewProcessingView extends StatelessWidget {
                                 ),
                               ),
 
-                            ...transcriptionStatuses.entries.map((entry) {
+                            ...transcriptionStatuses.entries.toList().map((
+                              entry,
+                            ) {
                               final index = entry.key;
                               final status = entry.value;
                               return _StatusItem(

@@ -15,7 +15,6 @@ import 'package:smart_interview_ai/presentation/on_interview/widgets/interview_i
 import 'package:smart_interview_ai/presentation/on_interview/widgets/interview_question_overlay.dart';
 import 'package:smart_interview_ai/presentation/on_interview/widgets/interview_tips_row.dart';
 import 'package:smart_interview_ai/presentation/on_interview/widgets/interview_processing_view.dart';
-import 'package:smart_interview_ai/presentation/on_interview/widgets/interview_transcription_indicator.dart';
 import 'package:smart_interview_ai/presentation/on_interview/widgets/interview_finished_dialog.dart';
 import 'package:smart_interview_ai/presentation/on_interview/widgets/camera_error_bottom_sheet.dart';
 
@@ -190,16 +189,6 @@ class _OnInterviewPageState extends State<OnInterviewPage> {
                               if (effectiveState is OnInterviewLoading)
                                 const Center(
                                   child: CircularProgressIndicator(),
-                                ),
-                              if (effectiveState is OnInterviewRecording)
-                                InterviewTranscriptionIndicator(
-                                  transcriptionStatuses:
-                                      effectiveState.transcriptionStatuses,
-                                ),
-                              if (effectiveState is OnInterviewStepTransition)
-                                InterviewTranscriptionIndicator(
-                                  transcriptionStatuses:
-                                      effectiveState.transcriptionStatuses,
                                 ),
                             ],
                           ),

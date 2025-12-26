@@ -125,15 +125,34 @@ class OnInterviewStepTransition extends OnInterviewState {
 
 class OnInterviewProcessing extends OnInterviewState {
   final Map<int, TranscriptionStatus> transcriptionStatuses;
+  final Map<int, String> transcriptions;
   final ScoringResult? finalResult;
 
   const OnInterviewProcessing({
     this.transcriptionStatuses = const {},
+    this.transcriptions = const {},
     this.finalResult,
   });
 
+  OnInterviewProcessing copyWith({
+    Map<int, TranscriptionStatus>? transcriptionStatuses,
+    Map<int, String>? transcriptions,
+    ScoringResult? finalResult,
+  }) {
+    return OnInterviewProcessing(
+      transcriptionStatuses:
+          transcriptionStatuses ?? this.transcriptionStatuses,
+      transcriptions: transcriptions ?? this.transcriptions,
+      finalResult: finalResult ?? this.finalResult,
+    );
+  }
+
   @override
-  List<Object?> get props => [transcriptionStatuses, finalResult];
+  List<Object?> get props => [
+    transcriptionStatuses,
+    transcriptions,
+    finalResult,
+  ];
 }
 
 class OnInterviewFinished extends OnInterviewState {
