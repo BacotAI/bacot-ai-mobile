@@ -13,7 +13,7 @@ class AuthGuard implements AutoRouteGuard {
     final isLoggedIn = await DI.authRepository.isLoggedIn();
 
     // TODO: bypass auth
-    if (!isLoggedIn) {
+    if (isLoggedIn) {
       resolver.next(true);
     } else {
       router.replace(const LoginRoute());
