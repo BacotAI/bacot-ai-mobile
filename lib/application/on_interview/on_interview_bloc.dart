@@ -56,6 +56,7 @@ class OnInterviewBloc extends Bloc<OnInterviewEvent, OnInterviewState> {
     on<OnInterviewTranscriptionCompleted>(_onTranscriptionCompleted);
     on<OnInterviewTranscriptionFailed>(_onTranscriptionFailed);
     on<OnInterviewSessionCleared>(_onSessionCleared);
+    on<OnInterviewCameraReinitializeRequested>(_onCameraReinitializeRequested);
   }
 
   FutureOr<void> _onInitialized(
@@ -106,6 +107,8 @@ class OnInterviewBloc extends Bloc<OnInterviewEvent, OnInterviewState> {
       await _recorderService.startVideoRecording();
     } catch (e) {
       Log.error("Gagal memulai rekaman video: $e");
+      _handleCameraError("Gagal memulai rekaman video: $e", emit);
+      return;
     }
 
     _elapsedSeconds = 0;
@@ -330,12 +333,16 @@ class OnInterviewBloc extends Bloc<OnInterviewEvent, OnInterviewState> {
       });
     } catch (e) {
       Log.error("Gagal memulai stream gambar baru: $e");
+      _handleCameraError("Gagal memulai stream gambar baru: $e", emit);
+      return;
     }
 
     try {
       await _recorderService.startVideoRecording();
     } catch (e) {
       Log.error("Gagal memulai rekaman video baru: $e");
+      _handleCameraError("Gagal memulai rekaman video baru: $e", emit);
+      return;
     }
 
     if (!isClosed) {
@@ -523,5 +530,118 @@ class OnInterviewBloc extends Bloc<OnInterviewEvent, OnInterviewState> {
     }
     _videoPaths.clear();
     Log.success('Interview session cleanup completed.');
+  }
+
+  FutureOr<void> _onCameraReinitializeRequested(
+    OnInterviewCameraReinitializeRequested event,
+    Emitter<OnInterviewState> emit,
+  ) async {
+    if (state is! OnInterviewCameraFailure) return;
+    final failureState = state as OnInterviewCameraFailure;
+
+    emit(failureState.copyWith(isReinitializing: true));
+
+    try {
+      // Re-initialize the entire recorder service
+      await _recorderService.initialize();
+
+      // Depend on the previous state to decide what to resume
+      final previousState = failureState.previousState;
+
+      if (previousState is OnInterviewRecording) {
+        // Resume image stream and video recording
+        await _recorderService.startImageStream((inputImage, cameraImage) {
+          if (!isClosed) {
+            add(OnInterviewImageStreamProcessed(inputImage, cameraImage));
+          }
+        });
+        await _recorderService.startVideoRecording();
+
+        // Resume amplitude monitoring if it was active
+        _amplitudeSubscription?.cancel();
+        _amplitudeSubscription = _recorderService.amplitudeStream.listen((
+          level,
+        ) {
+          if (!isClosed) {
+            add(OnInterviewAudioLevelChanged(level));
+          }
+        });
+
+        // Restart timer for recording
+        _timer?.cancel();
+        _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+          if (!isClosed) {
+            final currentState = state;
+            if (currentState is OnInterviewRecording) {
+              _elapsedSeconds++;
+              add(OnInterviewTimerTicked(_elapsedSeconds));
+            } else {
+              timer.cancel();
+            }
+          }
+        });
+
+        emit(previousState);
+      } else if (previousState is OnInterviewStepTransition) {
+        // If it failed during transition, move to the target question and start recording
+        final toIndex = previousState.toIndex;
+        final nextQuestion = _questions[toIndex];
+        final duration = nextQuestion.estimatedDurationSeconds;
+
+        await _recorderService.startImageStream((inputImage, cameraImage) {
+          if (!isClosed) {
+            add(OnInterviewImageStreamProcessed(inputImage, cameraImage));
+          }
+        });
+        await _recorderService.startVideoRecording();
+
+        _elapsedSeconds = 0;
+        _timer?.cancel();
+        _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+          if (!isClosed) {
+            final currentState = state;
+            if (currentState is OnInterviewRecording) {
+              _elapsedSeconds++;
+              add(OnInterviewTimerTicked(_elapsedSeconds));
+            } else {
+              timer.cancel();
+            }
+          }
+        });
+
+        emit(
+          OnInterviewRecording(
+            currentQuestionIndex: toIndex,
+            totalQuestions: _questions.length,
+            remainingSeconds: duration,
+            totalDuration: duration,
+            canGoNext: false,
+            audioLevel: previousState.audioLevel,
+            transcriptionStatuses: Map.from(_transcriptionStatuses),
+            transcriptions: Map.from(_transcriptions),
+          ),
+        );
+      } else if (previousState is OnInterviewLoading ||
+          previousState is OnInterviewInitial) {
+        // If it failed at the start, just trigger the normal flow
+        add(const OnInterviewStarted());
+      } else {
+        // For other states, just go back to them
+        emit(previousState);
+      }
+    } catch (e) {
+      Log.error("Re-initialization failed: $e");
+      emit(
+        failureState.copyWith(
+          message: "Gagal memulihkan kamera: $e",
+          isReinitializing: false,
+        ),
+      );
+    }
+  }
+
+  void _handleCameraError(String message, Emitter<OnInterviewState> emit) {
+    if (state is OnInterviewCameraFailure) return;
+    emit(OnInterviewCameraFailure(message: message, previousState: state));
   }
 }

@@ -157,3 +157,30 @@ class OnInterviewError extends OnInterviewState {
   @override
   List<Object?> get props => [message];
 }
+
+class OnInterviewCameraFailure extends OnInterviewState {
+  final String message;
+  final OnInterviewState previousState;
+  final bool isReinitializing;
+
+  const OnInterviewCameraFailure({
+    required this.message,
+    required this.previousState,
+    this.isReinitializing = false,
+  });
+
+  OnInterviewCameraFailure copyWith({
+    String? message,
+    OnInterviewState? previousState,
+    bool? isReinitializing,
+  }) {
+    return OnInterviewCameraFailure(
+      message: message ?? this.message,
+      previousState: previousState ?? this.previousState,
+      isReinitializing: isReinitializing ?? this.isReinitializing,
+    );
+  }
+
+  @override
+  List<Object?> get props => [message, previousState, isReinitializing];
+}

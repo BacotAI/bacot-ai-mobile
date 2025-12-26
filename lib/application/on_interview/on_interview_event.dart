@@ -84,3 +84,7 @@ class OnInterviewTranscriptionFailed extends OnInterviewEvent {
 class OnInterviewSessionCleared extends OnInterviewEvent {
   const OnInterviewSessionCleared();
 }
+
+class OnInterviewCameraReinitializeRequested extends OnInterviewEvent {
+  const OnInterviewCameraReinitializeRequested();
+}

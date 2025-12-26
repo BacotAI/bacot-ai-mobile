@@ -17,6 +17,7 @@ import 'package:smart_interview_ai/presentation/on_interview/widgets/interview_t
 import 'package:smart_interview_ai/presentation/on_interview/widgets/interview_processing_view.dart';
 import 'package:smart_interview_ai/presentation/on_interview/widgets/interview_transcription_indicator.dart';
 import 'package:smart_interview_ai/presentation/on_interview/widgets/interview_finished_dialog.dart';
+import 'package:smart_interview_ai/presentation/on_interview/widgets/camera_error_bottom_sheet.dart';
 
 @RoutePage()
 class OnInterviewPage extends StatefulWidget {
@@ -97,114 +98,132 @@ class _OnInterviewPageState extends State<OnInterviewPage> {
             }
           },
           builder: (context, state) {
-            if (state is OnInterviewProcessing) {
+            final effectiveState = state is OnInterviewCameraFailure
+                ? state.previousState
+                : state;
+
+            if (effectiveState is OnInterviewProcessing) {
               return SafeArea(child: const InterviewProcessingView());
             }
 
-            return SafeArea(
-              child: Column(
-                children: [
-                  InterviewHeader(
-                    currentIndex: state is OnInterviewRecording
-                        ? state.currentQuestionIndex
-                        : (state is OnInterviewStepTransition
-                              ? (state).toIndex
-                              : 0),
-                    totalSteps: widget.questions.length,
-                    sectionName: "Behavioral Section",
-                  ),
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-                      child: Stack(
-                        fit: StackFit.expand,
-                        children: [
-                          const InterviewCameraCard(),
-
-                          if (state is OnInterviewRecording ||
-                              state is OnInterviewCountdown)
-                            Positioned(
-                              bottom: state is OnInterviewRecording
-                                  ? MediaQuery.of(context).size.height * 0.18
-                                  : 20,
-                              left: 20,
-                              right: 20,
-                              child: Center(child: InterviewTipsRow()),
-                            ),
-
-                          if (state is OnInterviewRecording ||
-                              state is OnInterviewStepTransition) ...[
-                            const InterviewRECIndicator(),
-
-                            // TODO: const InterviewWarningIndicator(),
-                            Positioned(
-                              bottom: 20,
-                              left: 20,
-                              right: 20,
-                              child: AnimatedSwitcher(
-                                duration: const Duration(milliseconds: 500),
-                                transitionBuilder: (child, animation) {
-                                  return FadeTransition(
-                                    opacity: animation,
-                                    child: SlideTransition(
-                                      position: Tween<Offset>(
-                                        begin: const Offset(0.1, 0),
-                                        end: Offset.zero,
-                                      ).animate(animation),
-                                      child: child,
-                                    ),
-                                  );
-                                },
-                                child: InterviewQuestionOverlay(
-                                  key: ValueKey(
-                                    state is OnInterviewRecording
-                                        ? state.currentQuestionIndex
-                                        : (state as OnInterviewStepTransition)
-                                              .toIndex,
-                                  ),
-                                  question:
-                                      widget.questions[state
-                                              is OnInterviewRecording
-                                          ? state.currentQuestionIndex
-                                          : (state as OnInterviewStepTransition)
-                                                .toIndex],
-                                ),
-                              ),
-                            ),
-                          ],
-
-                          if (state is OnInterviewCountdown)
-                            InterviewCountdownOverlay(
-                              count: state.validDuration,
-                            ),
-
-                          if (state is OnInterviewLoading)
-                            const Center(child: CircularProgressIndicator()),
-
-                          if (state is OnInterviewRecording)
-                            InterviewTranscriptionIndicator(
-                              transcriptionStatuses:
-                                  state.transcriptionStatuses,
-                            ),
-
-                          if (state is OnInterviewStepTransition)
-                            InterviewTranscriptionIndicator(
-                              transcriptionStatuses:
-                                  state.transcriptionStatuses,
-                            ),
-                        ],
+            return Stack(
+              children: [
+                SafeArea(
+                  child: Column(
+                    children: [
+                      InterviewHeader(
+                        currentIndex: effectiveState is OnInterviewRecording
+                            ? effectiveState.currentQuestionIndex
+                            : (effectiveState is OnInterviewStepTransition
+                                  ? (effectiveState).toIndex
+                                  : 0),
+                        totalSteps: widget.questions.length,
+                        sectionName: "Behavioral Section",
                       ),
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+                          child: Stack(
+                            fit: StackFit.expand,
+                            children: [
+                              const InterviewCameraCard(),
+                              if (effectiveState is OnInterviewRecording ||
+                                  effectiveState is OnInterviewCountdown)
+                                Positioned(
+                                  bottom: effectiveState is OnInterviewRecording
+                                      ? MediaQuery.of(context).size.height *
+                                            0.18
+                                      : 20,
+                                  left: 20,
+                                  right: 20,
+                                  child: Center(child: InterviewTipsRow()),
+                                ),
+                              if (effectiveState is OnInterviewRecording ||
+                                  effectiveState
+                                      is OnInterviewStepTransition) ...[
+                                const InterviewRECIndicator(),
+
+                                // TODO: const InterviewWarningIndicator(),
+                                Positioned(
+                                  bottom: 20,
+                                  left: 20,
+                                  right: 20,
+                                  child: AnimatedSwitcher(
+                                    duration: const Duration(milliseconds: 500),
+                                    transitionBuilder: (child, animation) {
+                                      return FadeTransition(
+                                        opacity: animation,
+                                        child: SlideTransition(
+                                          position: Tween<Offset>(
+                                            begin: const Offset(0.1, 0),
+                                            end: Offset.zero,
+                                          ).animate(animation),
+                                          child: child,
+                                        ),
+                                      );
+                                    },
+                                    child: InterviewQuestionOverlay(
+                                      key: ValueKey(
+                                        effectiveState is OnInterviewRecording
+                                            ? effectiveState
+                                                  .currentQuestionIndex
+                                            : (effectiveState
+                                                      as OnInterviewStepTransition)
+                                                  .toIndex,
+                                      ),
+                                      question:
+                                          widget.questions[effectiveState
+                                                  is OnInterviewRecording
+                                              ? effectiveState
+                                                    .currentQuestionIndex
+                                              : (effectiveState
+                                                        as OnInterviewStepTransition)
+                                                    .toIndex],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                              if (effectiveState is OnInterviewCountdown)
+                                InterviewCountdownOverlay(
+                                  count: effectiveState.validDuration,
+                                ),
+                              if (effectiveState is OnInterviewLoading)
+                                const Center(
+                                  child: CircularProgressIndicator(),
+                                ),
+                              if (effectiveState is OnInterviewRecording)
+                                InterviewTranscriptionIndicator(
+                                  transcriptionStatuses:
+                                      effectiveState.transcriptionStatuses,
+                                ),
+                              if (effectiveState is OnInterviewStepTransition)
+                                InterviewTranscriptionIndicator(
+                                  transcriptionStatuses:
+                                      effectiveState.transcriptionStatuses,
+                                ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      if (effectiveState is OnInterviewRecording ||
+                          effectiveState is OnInterviewStepTransition ||
+                          effectiveState is OnInterviewCountdown)
+                        InterviewBottomSection(state: effectiveState),
+                      const SizedBox(height: 16),
+                    ],
+                  ),
+                ),
+                if (state is OnInterviewCameraFailure)
+                  Positioned(
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    child: CameraErrorBottomSheet(
+                      message: state.message,
+                      isReinitializing: state.isReinitializing,
                     ),
                   ),
-
-                  if (state is OnInterviewRecording ||
-                      state is OnInterviewStepTransition ||
-                      state is OnInterviewCountdown)
-                    InterviewBottomSection(state: state),
-
-                  const SizedBox(height: 16),
-                ],
-              ),
+              ],
             );
           },
         ),
