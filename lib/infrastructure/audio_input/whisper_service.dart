@@ -22,27 +22,27 @@ class WhisperService {
 
     try {
       final dir = await getApplicationDocumentsDirectory();
-      _modelPath = '${dir.path}/ggml-tiny.bin';
+      _modelPath = '${dir.path}/ggml-base.bin';
 
       final modelFile = File(_modelPath!);
       if (!await modelFile.exists()) {
         try {
-          final data = await rootBundle.load('assets/ml/ggml-tiny.bin');
+          final data = await rootBundle.load('assets/ml/ggml-base.bin');
           final bytes = data.buffer.asUint8List();
           await modelFile.writeAsBytes(bytes, flush: true);
         } catch (e) {
           Log.error(
-            'Model file not found in assets. Please ensure assets/ml/ggml-tiny.bin exists.',
+            'Model file not found in assets. Please ensure assets/ml/ggml-base.bin exists.',
           );
           throw Exception(
-            'Model file not found in assets. Please ensure assets/ml/ggml-tiny.bin exists.',
+            'Model file not found in assets. Please ensure assets/ml/ggml-base.bin exists.',
           );
         }
       }
 
-      _whisper = Whisper(model: WhisperModel.tiny);
+      _whisper = Whisper(model: WhisperModel.base);
       _isInitialized = true;
-      Log.info('WhisperService initialized with tiny model.');
+      Log.debug('WhisperService initialized with base model.');
     } catch (e) {
       _isInitialized = false;
       Log.error('WhisperService initialization failed: $e');
@@ -56,7 +56,7 @@ class WhisperService {
     _currentTranscription = completer.future;
 
     if (previousTranscription != null) {
-      Log.info('Whisper: Transcription already in progress, waiting...');
+      Log.debug('Whisper: Transcription already in progress, waiting...');
       await previousTranscription;
     }
 
@@ -81,7 +81,7 @@ class WhisperService {
     // Whisper requires 16000Hz mono WAV files
     final command = '-y -i $path -ar 16000 -ac 1 $outputPath';
 
-    Log.info('Converting audio for Whisper: $command');
+    Log.debug('Converting audio for Whisper: $command');
     final session = await FFmpegKit.execute(command);
     final returnCode = await session.getReturnCode();
 
@@ -97,7 +97,7 @@ class WhisperService {
     }
 
     try {
-      Log.info('Starting Whisper transcription for: $outputPath');
+      Log.debug('Starting Whisper transcription for: $outputPath');
       final res = await _whisper.transcribe(
         transcribeRequest: TranscribeRequest(
           audio: outputPath,
@@ -105,7 +105,7 @@ class WhisperService {
           isNoTimestamps: true,
         ),
       );
-      Log.info('Whisper transcription completed.');
+      Log.debug('Whisper transcription completed.');
       return res.text;
     } catch (e) {
       Log.error('Transcription failed: $e');

@@ -107,11 +107,11 @@ class OnInterviewBloc extends Bloc<OnInterviewEvent, OnInterviewState> {
     await countdownCompleter.future;
 
     // Start Image Stream BEFORE Video Recording for Android compatibility
-    await _recorderService.startImageStream((inputImage, cameraImage) {
-      if (!isClosed) {
-        add(OnInterviewImageStreamProcessed(inputImage, cameraImage));
-      }
-    });
+    // await _recorderService.startImageStream((inputImage, cameraImage) {
+    //   if (!isClosed) {
+    //     add(OnInterviewImageStreamProcessed(inputImage, cameraImage));
+    //   }
+    // });
 
     try {
       await _recorderService.startVideoRecording();
@@ -148,7 +148,6 @@ class OnInterviewBloc extends Bloc<OnInterviewEvent, OnInterviewState> {
       });
     }
 
-    // Clear any existing timer
     _timer?.cancel();
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       _elapsedSeconds++;
@@ -170,42 +169,42 @@ class OnInterviewBloc extends Bloc<OnInterviewEvent, OnInterviewState> {
     List<Pose>? poses;
     ProhibitedItemResult? objectResult;
 
-    try {
-      if (_frameCounter % 3 == 0) {
-        final faces = await _recorderService.processFace(event.inputImage);
-        if (faces.isNotEmpty) face = faces.first;
-      } else if (_frameCounter % 3 == 1) {
-        final poseList = await _recorderService.processPose(event.inputImage);
-        if (poseList.isNotEmpty) poses = poseList;
-      } else {
-        objectResult = await _recorderService.processObject(event.inputImage);
-      }
+    // try {
+    //   if (_frameCounter % 3 == 0) {
+    //     final faces = await _recorderService.processFace(event.inputImage);
+    //     if (faces.isNotEmpty) face = faces.first;
+    //   } else if (_frameCounter % 3 == 1) {
+    //     final poseList = await _recorderService.processPose(event.inputImage);
+    //     if (poseList.isNotEmpty) poses = poseList;
+    //   } else {
+    //     objectResult = await _recorderService.processObject(event.inputImage);
+    //   }
 
-      if (face != null || poses != null || objectResult != null) {
-        final result = ScoringCalculator.calculate(
-          face: face,
-          poses: poses,
-          objectResult: objectResult,
-          imageSize: Size(
-            event.cameraImage.width.toDouble(),
-            event.cameraImage.height.toDouble(),
-          ),
-          screenSize: null,
-        );
+    //   if (face != null || poses != null || objectResult != null) {
+    //     final result = ScoringCalculator.calculate(
+    //       face: face,
+    //       poses: poses,
+    //       objectResult: objectResult,
+    //       imageSize: Size(
+    //         event.cameraImage.width.toDouble(),
+    //         event.cameraImage.height.toDouble(),
+    //       ),
+    //       screenSize: null,
+    //     );
 
-        if (!isClosed && state is OnInterviewRecording) {
-          // emit(
-          //   OnInterviewRecording(
-          //     elapsedSeconds: _elapsedSeconds,
-          //     totalDuration: _totalDuration,
-          //     lastScoringResult: result,
-          //   ),
-          // );
-        }
-      }
-    } catch (e) {
-      debugPrint("ML Processing Error: $e");
-    }
+    //     if (!isClosed && state is OnInterviewRecording) {
+    //       // emit(
+    //       //   OnInterviewRecording(
+    //       //     elapsedSeconds: _elapsedSeconds,
+    //       //     totalDuration: _totalDuration,
+    //       //     lastScoringResult: result,
+    //       //   ),
+    //       // );
+    //     }
+    //   }
+    // } catch (e) {
+    //   debugPrint("ML Processing Error: $e");
+    // }
   }
 
   FutureOr<void> _onStopped(
@@ -230,24 +229,23 @@ class OnInterviewBloc extends Bloc<OnInterviewEvent, OnInterviewState> {
 
     if (!isClosed) {
       try {
+        Log.debug('Log: Stopping image stream');
         await _recorderService.stopImageStream();
       } catch (e) {
         Log.error('Error stopping image stream: $e');
       }
 
+      Log.debug('Log: Stopping video recording');
       final videoFile = await _recorderService.stopVideoRecording();
+      Log.debug('Log: Current state: $state');
       if (videoFile != null) {
-        _videoPaths.add(videoFile.path);
-
-        Log.debug('Log: Current state: $state');
         Log.debug('Log: Last video file path: ${videoFile.path}');
+        _videoPaths.add(videoFile.path);
       }
 
-      // Trigger parallel transcription for all recorded videos
       _startAllTranscriptions();
     }
 
-    // Dispose recorder service immediately after recording stops
     await _recorderService.dispose();
   }
 
@@ -282,8 +280,10 @@ class OnInterviewBloc extends Bloc<OnInterviewEvent, OnInterviewState> {
           _timer?.cancel();
           final nextIndex = currentState.currentQuestionIndex + 1;
           if (nextIndex < currentState.totalQuestions) {
+            Log.debug('Log: Next question requested');
             add(const OnInterviewNextQuestionRequested());
           } else {
+            Log.debug('Log: Interview stopped');
             add(const OnInterviewStopped());
           }
         } else {
@@ -310,7 +310,6 @@ class OnInterviewBloc extends Bloc<OnInterviewEvent, OnInterviewState> {
     final fromIndex = currentState.currentQuestionIndex;
     final toIndex = fromIndex + 1;
 
-    // Immediately cancel current timer to prevent double ticking
     _timer?.cancel();
     _timer = null;
 
@@ -336,14 +335,12 @@ class OnInterviewBloc extends Bloc<OnInterviewEvent, OnInterviewState> {
       Log.error("Error stopping recording during transition: $e");
     }
 
-    // // Small delay to allow camera resources to be fully released
-    // await Future.delayed(const Duration(milliseconds: 500));
+    await Future.delayed(const Duration(milliseconds: 100));
 
     _elapsedSeconds = 0;
     final nextQuestion = _questions[toIndex];
     final duration = nextQuestion.estimatedDurationSeconds;
 
-    // Start Image Stream BEFORE Video Recording for Android compatibility
     try {
       await _recorderService.startImageStream((inputImage, cameraImage) {
         if (!isClosed) {

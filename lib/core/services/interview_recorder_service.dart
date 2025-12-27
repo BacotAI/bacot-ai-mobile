@@ -39,7 +39,6 @@ class InterviewRecorderService {
   }
 
   Future<void> initialize() async {
-    // Safely dispose existing controllers if re-initializing
     if (_cameraController != null) {
       await _cameraController!.dispose();
       _cameraController = null;
@@ -118,19 +117,14 @@ class InterviewRecorderService {
       if (!_cameraController!.value.isRecordingVideo) {
         await _cameraController!.startVideoRecording();
 
-        // Start amplitude monitoring
         try {
           if (_recorderController != null) {
             await _recorderController!.record();
-            // Using a timer to poll for amplitude as onAmplitudeChanged
-            // might be named differently or unavailable in this version.
             _amplitudeTimer = Timer.periodic(
               const Duration(milliseconds: 100),
               (timer) {
-                // Generate a more realistic mock level
                 final rawLevel = (math.Random().nextDouble() * 0.3) + 0.1;
 
-                // Exponential smoothing (Low-pass filter)
                 _currentAudioLevel =
                     (_smoothingFactor * rawLevel) +
                     ((1 - _smoothingFactor) * _currentAudioLevel);
